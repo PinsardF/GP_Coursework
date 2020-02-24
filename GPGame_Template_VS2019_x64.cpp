@@ -1,4 +1,4 @@
-// Simplified Renderer application for GP course TEST
+// Simplified Renderer application for GP course
 // Features:
 // Reduced OpenGL version from 4.5 to 3.3 to allow it to render in older laptops.
 // Added Shapes library for rendering cubes, spheres and vectors.
@@ -56,7 +56,7 @@ public:
 	float y;
 	float z;
 	bool isalive;
-	//Line visualparticle;
+	Line visualParticle;
 
 	Particle(int input_timetolive, float input_x, float input_y, float input_z, bool input_isalive) {
 		timetolive = input_timetolive;
@@ -67,19 +67,53 @@ public:
 	}
 	Particle() : timetolive(200),x(0.0f), y(0.0f), z(0.0f), isalive(true) {}
 
-	/*void update() {
+	void init() {
+		Line* visualParticle_p = new Line;
+		visualParticle = *visualParticle_p;
+		visualParticle.Load();
+		visualParticle.fillColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		visualParticle.lineColor = glm::vec4(0.2f, 1.0f, 0.8f, 1.0f);
+		visualParticle.lineWidth = 5.0f;
+	}
+
+	glm::mat4 update() {
 		if (timetolive > 0.0f) {
+			int x_rand = rand() % 10;
+			float x_deviation = 0.0f;
+			switch (x_rand) {
+			case 0:
+				x_deviation = 0.03f;
+				break;
+			case 1:
+				x_deviation = -0.03f;
+				break;
+			default:
+				break;
+			}
+			int z_rand = rand() % 10;
+			float z_deviation = 0.0f;
+			switch (z_rand) {
+			case 0:
+				z_deviation = 0.03f;
+				break;
+			case 1:
+				z_deviation = -0.03f;
+				break;
+			default:
+				break;
+			}
+
+			x += x_deviation;
 			y += 0.01f;
+			z += z_deviation;
 			timetolive--;
 			glm::mat4 mv_particle =
-				glm::translate(glm::vec3(-1.0f, z, -1.0f)) *
+				glm::translate(glm::vec3(x, y, z)) *
 				glm::scale(glm::vec3(200.0f, 200.0f, 0.03f)) *
 				glm::mat4(1.0f);
-			particle.mv_matrix = myGraphics.viewMatrix * mv_particle;//marche pas car myGraphics est initialisé dans le main
-			//particle.proj_matrix = myGraphics.proj_matrix;
+			return mv_particle;
 		}
-		//glm::vec3 test = glm::vec3(0.0f,0.0f,0.0f);
-	}*/
+	}
 
 	void destroy() {//unused for now
 		delete this;
@@ -104,6 +138,7 @@ public:
 
 	void initparticle() {
 		emittedparticle = Particle(150 + rand()%150,-1.0f,0.0f,-1.0f,true);
+		emittedparticle.init();
 	}
 	void update() {
 		if (!emittedparticle.isalive) {
@@ -128,7 +163,7 @@ Cube        myFloor;
 Line        myLine;
 Cylinder    myCylinder;
 
-Line		particle;
+//Line		particle;
 //Particle	simpleparticle;
 ParticleEmitter emitter = ParticleEmitter();
 
@@ -213,11 +248,8 @@ void startup() {
 	myLine.lineColor = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
 	myLine.lineWidth = 5.0f;
 
-	particle.Load();
-	particle.fillColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	particle.lineColor = glm::vec4(0.2f, 1.0f, 0.8f, 1.0f);
-	particle.lineWidth = 5.0f;
 	emitter.initparticle();
+	emitter.emittedparticle.init();
 
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
@@ -338,42 +370,10 @@ void updateSceneElements() {
 		glm::mat4(1.0f);
 	myLine.proj_matrix = myGraphics.proj_matrix;
 
-	if (emitter.emittedparticle.timetolive > 0.0f && emitter.emittedparticle.isalive) {
-		int x_rand = rand() % 10;
-		float x_deviation = 0.0f;
-		switch (x_rand){
-		case 0:
-			x_deviation = 0.03f;
-			break;
-		case 1:
-			x_deviation = -0.03f;
-			break;
-		default:
-			break;
-		}
-		int z_rand = rand() % 10;
-		float z_deviation = 0.0f;
-		switch (z_rand) {
-		case 0:
-			z_deviation = 0.03f;
-			break;
-		case 1:
-			z_deviation = -0.03f;
-			break;
-		default:
-			break;
-		}
-
-		emitter.emittedparticle.x += x_deviation;
-		emitter.emittedparticle.y += 0.01f;
-		emitter.emittedparticle.z += z_deviation;
-		emitter.emittedparticle.timetolive--;
-		glm::mat4 mv_particle =
-			glm::translate(glm::vec3(emitter.emittedparticle.x, emitter.emittedparticle.y, emitter.emittedparticle.z)) *
-			glm::scale(glm::vec3(200.0f, 200.0f, 0.03f)) *
-			glm::mat4(1.0f);
-		particle.mv_matrix = myGraphics.viewMatrix * mv_particle;
-		particle.proj_matrix = myGraphics.proj_matrix;
+	if (emitter.emittedparticle.isalive) {
+		glm::mat4 mv_particle = emitter.emittedparticle.update();
+		emitter.emittedparticle.visualParticle.mv_matrix = myGraphics.viewMatrix * mv_particle;
+		emitter.emittedparticle.visualParticle.proj_matrix = myGraphics.proj_matrix;
 	}
 	emitter.update();
 
@@ -404,7 +404,7 @@ void renderScene() {
 		emitter.emittedparticle.isalive = false;
 	}
 	if (emitter.emittedparticle.isalive) {
-		particle.Draw();
+		emitter.emittedparticle.visualParticle.Draw();
 	}
 }
 
