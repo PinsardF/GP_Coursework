@@ -24,6 +24,7 @@ using namespace std;
 #include <glm/gtx/transform.hpp>
 #include "graphics.h"
 #include "shapes.h"
+#include <vector>
 
 // MAIN FUNCTIONS
 void startup();
@@ -65,7 +66,7 @@ public:
 		z = input_z;
 		isalive = input_isalive;
 	}
-	Particle() : timetolive(200),x(0.0f), y(0.0f), z(0.0f), isalive(true) {}
+	Particle() : timetolive(200), x(0.0f), y(0.0f), z(0.0f), isalive(true) {}
 
 	void init() {
 		Line* visualParticle_p = new Line;
@@ -126,7 +127,8 @@ public:
 	float y;
 	float z;
 	int reloadtime;
-	Particle emittedparticle;
+	//Particle emittedparticle;
+	Particle particlesList[6];
 
 	ParticleEmitter(float input_x, float input_y, float input_z, int input_reloadtime) {
 		x = input_x;
@@ -137,11 +139,13 @@ public:
 	ParticleEmitter() : x(-1.0f), y(0.0f), z(-1.0f), reloadtime(40) {};
 
 	void initparticle() {
-		emittedparticle = Particle(150 + rand()%150,-1.0f,0.0f,-1.0f,true);
-		emittedparticle.init();
+
+		Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
+		newParticle.init();
+		particlesList[0] = newParticle;
 	}
 	void update() {
-		if (!emittedparticle.isalive) {
+		//if (!particlesList[0].isalive) {
 			if (reloadtime <= 0) {
 				initparticle();
 				reloadtime = rand() % 50;
@@ -149,7 +153,7 @@ public:
 			else {
 				reloadtime--;
 			}
-		}
+		//}
 	}
 };
 
@@ -249,7 +253,6 @@ void startup() {
 	myLine.lineWidth = 5.0f;
 
 	emitter.initparticle();
-	emitter.emittedparticle.init();
 
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
@@ -370,10 +373,10 @@ void updateSceneElements() {
 		glm::mat4(1.0f);
 	myLine.proj_matrix = myGraphics.proj_matrix;
 
-	if (emitter.emittedparticle.isalive) {
-		glm::mat4 mv_particle = emitter.emittedparticle.update();
-		emitter.emittedparticle.visualParticle.mv_matrix = myGraphics.viewMatrix * mv_particle;
-		emitter.emittedparticle.visualParticle.proj_matrix = myGraphics.proj_matrix;
+	if (emitter.particlesList[0].isalive) {
+		glm::mat4 mv_particle = emitter.particlesList[0].update();
+		emitter.particlesList[0].visualParticle.mv_matrix = myGraphics.viewMatrix * mv_particle;
+		emitter.particlesList[0].visualParticle.proj_matrix = myGraphics.proj_matrix;
 	}
 	emitter.update();
 
@@ -400,11 +403,11 @@ void renderScene() {
 	myLine.Draw();
 	myCylinder.Draw();
 
-	if (emitter.emittedparticle.timetolive <= 0.0f) {
-		emitter.emittedparticle.isalive = false;
+	if (emitter.particlesList[0].timetolive <= 0.0f) {
+		emitter.particlesList[0].isalive = false;
 	}
-	if (emitter.emittedparticle.isalive) {
-		emitter.emittedparticle.visualParticle.Draw();
+	if (emitter.particlesList[0].isalive) {
+		emitter.particlesList[0].visualParticle.Draw();
 	}
 }
 
