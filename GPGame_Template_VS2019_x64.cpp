@@ -1,4 +1,4 @@
-// Simplified Renderer application for GP course
+// Simplified Renderer application for GP course TEST
 // Features:
 // Reduced OpenGL version from 4.5 to 3.3 to allow it to render in older laptops.
 // Added Shapes library for rendering cubes, spheres and vectors.
@@ -75,7 +75,7 @@ public:
 				glm::translate(glm::vec3(-1.0f, z, -1.0f)) *
 				glm::scale(glm::vec3(200.0f, 200.0f, 0.03f)) *
 				glm::mat4(1.0f);
-			particle.mv_matrix = myGraphics.viewMatrix * mv_particle;//marche pas car myGraphics est initialisé dans le main
+			particle.mv_matrix = myGraphics.viewMatrix * mv_particle;//marche pas car myGraphics est initialisÃ© dans le main
 			//particle.proj_matrix = myGraphics.proj_matrix;
 		}
 		//glm::vec3 test = glm::vec3(0.0f,0.0f,0.0f);
