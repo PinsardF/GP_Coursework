@@ -17,10 +17,10 @@ using namespace std;
 #include "Player.h"
 
 // MAIN FUNCTIONS
-void startup();
+void startup(Player& player);
 void updateCamera();
-void updateSceneElements();
-void renderScene();
+void updateSceneElements(Player& player);
+void renderScene(Player& player);
 
 // CALLBACK FUNCTIONS
 void onResizeCallback(GLFWwindow* window, int w, int h);
@@ -42,6 +42,7 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 // Objects
 Cube        myFloor;
 Player		player(2.0f, 0.5f, 0.0f);
+//Cube        myCube;
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -49,12 +50,10 @@ float t = 0.001f;            // Global variable for animation
 
 int main()
 {
-	cout <<"Le x du joueur est " << player.x << endl;
-
 	int errorGraphics = myGraphics.Init();			// Launch window and graphics context
 	if (errorGraphics) return 0;					// Close if something went wrong...
 
-	startup();										// Setup all necessary information for startup (aka. load texture, shaders, models, etc).
+	startup(player);										// Setup all necessary information for startup (aka. load texture, shaders, models, etc).
 
 
 
@@ -65,10 +64,10 @@ int main()
 		updateCamera();
 
 		// Update position, orientations and any other relevant visual state of any dynamic elements in the scene.
-		updateSceneElements();
+		updateSceneElements(player);
 
 		// Render a still frame into an off-screen frame buffer known as the backbuffer.
-		renderScene();
+		renderScene(player);
 
 		// Swap the back buffer with the front buffer, making the most recently rendered image visible on-screen.
 		glfwSwapBuffers(myGraphics.window);        // swap buffers (avoid flickering and tearing)
@@ -84,7 +83,7 @@ int main()
 	return 0;
 }
 
-void startup() {
+void startup(Player& player) {
 	// Keep track of the running time
 	GLfloat currentTime = (GLfloat)glfwGetTime();    // retrieve timelapse
 	deltaTime = currentTime;                        // start delta time
@@ -102,7 +101,10 @@ void startup() {
 	myGraphics.aspect = (float)myGraphics.windowWidth / (float)myGraphics.windowHeight;
 	myGraphics.proj_matrix = glm::perspective(glm::radians(50.0f), myGraphics.aspect, 0.1f, 1000.0f);
 
+	//myCube.Load();
+
 	player.init();
+	cout << "Le x du joueur est " << player.x << endl;
 	
 	myFloor.Load();
 	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
@@ -147,7 +149,7 @@ void updateCamera() {
 	if (keyStatus[GLFW_KEY_W]) myGraphics.cameraPosition += cameraSpeed * myGraphics.cameraFront;
 	if (keyStatus[GLFW_KEY_S]) myGraphics.cameraPosition -= cameraSpeed * myGraphics.cameraFront;
 	if (keyStatus[GLFW_KEY_A]) myGraphics.cameraPosition -= glm::normalize(glm::cross(myGraphics.cameraFront, myGraphics.cameraUp)) * cameraSpeed;
-	// if (keyStatus[GLFW_KEY_D]) myGraphics.cameraPosition += glm::normalize(glm::cross(myGraphics.cameraFront, myGraphics.cameraUp)) * cameraSpeed;
+	if (keyStatus[GLFW_KEY_D]) myGraphics.cameraPosition += glm::normalize(glm::cross(myGraphics.cameraFront, myGraphics.cameraUp)) * cameraSpeed;
 
 	// IMPORTANT PART
 	// Calculate my view matrix using the lookAt helper function
@@ -158,7 +160,7 @@ void updateCamera() {
 	}
 }
 
-void updateSceneElements() {
+void updateSceneElements(Player& player) {
 
 	glfwPollEvents();                                // poll callbacks
 
@@ -169,8 +171,11 @@ void updateSceneElements() {
 
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 
-	// Set character in space
-	player.set_in_space();
+	glm::mat4 pos_player =
+		glm::translate(glm::vec3(2.0f, 0.5f, 0.0f)) *
+		glm::mat4(1.0f);
+	player.character.mv_matrix = myGraphics.viewMatrix * pos_player;
+	player.character.proj_matrix = myGraphics.proj_matrix;
 
 	// Calculate floor position and resize
 	myFloor.mv_matrix = myGraphics.viewMatrix *
@@ -179,20 +184,12 @@ void updateSceneElements() {
 		glm::mat4(1.0f);
 	myFloor.proj_matrix = myGraphics.proj_matrix;
 
-	/*if (emitter.particlesList[0].isalive) {
-		glm::mat4 mv_particle = emitter.particlesList[0].update();
-		emitter.particlesList[0].visualParticle.mv_matrix = myGraphics.viewMatrix * mv_particle;
-		emitter.particlesList[0].visualParticle.proj_matrix = myGraphics.proj_matrix;
-	}
-	emitter.update();
-	*/
-
-	t += 0.01f; // increment movement variable
+	t += 0.01f; // increment movement variables
 
 	if (glfwWindowShouldClose(myGraphics.window) == GL_TRUE) quit = true; // If quit by pressing x on window.
 }
 
-void renderScene() {
+void renderScene(Player& player) {
 	// Clear viewport - start a new frame.
 	myGraphics.ClearViewport();
 
