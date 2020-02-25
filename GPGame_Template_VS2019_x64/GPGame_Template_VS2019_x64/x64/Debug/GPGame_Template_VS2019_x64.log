@@ -1,1 +1,6 @@
-﻿  GPGame_Template_VS2019_x64.vcxproj -> C:\Users\baton\Documents\EDIMBOURG\COURS\ComputerGames\Projects\GPGameTemplate-master\GPGame_Template_VS2019_x64\x64\Debug\GPGame_Template_VS2019_x64.exe
+﻿  GPGame_Template_VS2019_x64.cpp
+LINK : warning LNK4098: conflit entre la bibliothèque par défaut 'MSVCRT' et les autres bibliothèques ; utilisez /NODEFAULTLIB:library
+GPGame_Template_VS2019_x64.obj : error LNK2019: symbole externe non résolu "public: void __cdecl Player::init(void)" (?init@Player@@QEAAXXZ) référencé dans la fonction "void __cdecl startup(void)" (?startup@@YAXXZ)
+GPGame_Template_VS2019_x64.obj : error LNK2019: symbole externe non résolu "public: void __cdecl Player::set_in_space(void)" (?set_in_space@Player@@QEAAXXZ) référencé dans la fonction "void __cdecl updateSceneElements(void)" (?updateSceneElements@@YAXXZ)
+GPGame_Template_VS2019_x64.obj : error LNK2019: symbole externe non résolu "public: void __cdecl Player::render_character(void)" (?render_character@Player@@QEAAXXZ) référencé dans la fonction "void __cdecl renderScene(void)" (?renderScene@@YAXXZ)
+C:\Users\baton\Documents\EDIMBOURG\COURS\ComputerGames\Projects\GP_Coursework\GPGame_Template_VS2019_x64\x64\Debug\GPGame_Template_VS2019_x64.exe : fatal error LNK1120: 3 externes non résolus
