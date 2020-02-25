@@ -45,6 +45,8 @@ float       deltaTime = 0.0f;    // Keep track of time per frame.
 float       lastTime = 0.0f;    // variable to keep overall time.
 bool        keyStatus[1024];    // Hold key status.
 bool		mouseEnabled = true; // keep track of mouse toggle.
+float		test_collision = 0.03f;
+float		cube_x = 2.0f;
 
 // MAIN GRAPHICS OBJECT
 Graphics    myGraphics;        // Runing all the graphics in this object
@@ -53,20 +55,18 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 class Particle {
 public:
 	int timetolive;
-	float x;
-	float y;
-	float z;
+	glm::vec3 vector;
 	bool isalive;
 	Line visualParticle;
 
-	Particle(int input_timetolive, float input_x, float input_y, float input_z, bool input_isalive) {
+	Particle(int input_timetolive, glm::vec3 input_vector, bool input_isalive) {
 		timetolive = input_timetolive;
-		x = input_x;
-		y = input_y;
-		z = input_z;
+		vector.x = input_vector.x;
+		vector.y = input_vector.y;
+		vector.z = input_vector.z;
 		isalive = input_isalive;
 	}
-	Particle() : timetolive(200), x(0.0f), y(0.0f), z(0.0f), isalive(true) {}
+	Particle() : timetolive(200), vector(glm::vec3(0.0f, 0.0f, 0.0f)), isalive(true) {}
 
 	void init() {
 		Line* visualParticle_p = new Line;
@@ -104,12 +104,12 @@ public:
 				break;
 			}
 
-			x += x_deviation;
-			y += 0.01f;
-			z += z_deviation;
+			vector.x += x_deviation;
+			vector.y += 0.01f;
+			vector.z += z_deviation;
 			timetolive--;
 			glm::mat4 mv_particle =
-				glm::translate(glm::vec3(x, y, z)) *
+				glm::translate(vector) *
 				glm::scale(glm::vec3(200.0f, 200.0f, 0.03f)) *
 				glm::mat4(1.0f);
 			return mv_particle;
@@ -123,29 +123,44 @@ public:
 
 class ParticleEmitter {
 public:
-	float x;
-	float y;
-	float z;
+	glm::vec3 vector;
 	int reloadtime;
 	//Particle emittedparticle;
 	Particle particlesList[6];
 
-	ParticleEmitter(float input_x, float input_y, float input_z, int input_reloadtime) {
-		x = input_x;
-		y = input_y;
-		z = input_z;
+	ParticleEmitter(glm::vec3 input_vector, int input_reloadtime) {
+		vector.x = input_vector.x;
+		vector.y = input_vector.y;
+		vector.z = input_vector.z;
 		reloadtime = input_reloadtime;
 	}
-	ParticleEmitter() : x(-1.0f), y(0.0f), z(-1.0f), reloadtime(40) {};
+	ParticleEmitter() : vector(glm::vec3(-1.0f, 0.0f, -1.0f)), reloadtime(40) {};
 
 	void initparticle() {
-
-		Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
+		/*int listSize = sizeof(particlesList);
+		if (listSize == 0) {
+			Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
+			newParticle.init();
+			particlesList[0] = newParticle;
+		}
+		else if (listSize == 1) {
+			Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
+			newParticle.init();
+			particlesList[1] = newParticle;
+		}*/
+		/*if (listSize < 6) {
+			//emittedparticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
+			Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
+			//emittedparticle.init();
+			newParticle.init();
+			particlesList[listSize] = newParticle;
+		}*/
+		Particle newParticle = Particle(150 + rand() % 150, glm::vec3(-1.0f, 0.0f, -1.0f), true);
 		newParticle.init();
 		particlesList[0] = newParticle;
 	}
 	void update() {
-		//if (!particlesList[0].isalive) {
+		if (!particlesList[0].isalive) {
 			if (reloadtime <= 0) {
 				initparticle();
 				reloadtime = rand() % 50;
@@ -153,7 +168,57 @@ public:
 			else {
 				reloadtime--;
 			}
-		//}
+		}
+	}
+};
+
+class BoundaryBox {//COLLISIONS
+public:
+	glm::vec3 center;
+	glm::vec3 max_position;
+	glm::vec3 min_position;
+
+	BoundaryBox(glm::vec3 input_center, glm::vec3 input_max, glm::vec3 input_min) {
+		center = input_center;
+		max_position = input_max;
+		min_position = input_min;
+	}
+	BoundaryBox() : center(glm::vec3(0.0f, 0.0f, 0.0f)), max_position(glm::vec3(1.0f, 1.0f, 1.0f)),
+		min_position(glm::vec3(-1.0f, -1.0f, -1.0f)) {}
+
+	bool detect_collision(BoundaryBox other_object) {
+		if (max_position.x >= other_object.min_position.x && min_position.x <= other_object.max_position.x &&
+			max_position.y >= other_object.min_position.y && min_position.y <= other_object.max_position.y &&
+			max_position.z >= other_object.min_position.z && min_position.z <= other_object.max_position.z) {
+			return true;
+		}
+		/*if (min_position.x < other_object.max_position.x) {
+			return true;
+		}*/
+		return false;
+	}
+
+	glm::vec3 center_of_collision(BoundaryBox other_object) {
+		glm::vec3 collisionCenter = glm::vec3(0.0f, 0.0f, 0.0f);
+		if (abs(max_position.x - other_object.min_position.x) <= abs(min_position.x - other_object.max_position.x)) {
+			collisionCenter.x = (max_position.x + other_object.min_position.x) / 2;
+		}
+		else {
+			collisionCenter.x = (min_position.x + other_object.max_position.x) / 2;
+		}
+		if (abs(max_position.y - other_object.min_position.y) <= abs(min_position.y - other_object.max_position.y)) {
+			collisionCenter.y = (max_position.y + other_object.min_position.y) / 2;
+		}
+		else {
+			collisionCenter.y = (min_position.y + other_object.max_position.y) / 2;
+		}
+		if (abs(max_position.z - other_object.min_position.z) <= abs(min_position.z - other_object.max_position.z)) {
+			collisionCenter.z = (max_position.z + other_object.min_position.z) / 2;
+		}
+		else {
+			collisionCenter.z = (min_position.z + other_object.max_position.z) / 2;
+		}
+		return collisionCenter;
 	}
 };
 
@@ -167,9 +232,9 @@ Cube        myFloor;
 Line        myLine;
 Cylinder    myCylinder;
 
-//Line		particle;
-//Particle	simpleparticle;
 ParticleEmitter emitter = ParticleEmitter();
+BoundaryBox cubeBox = BoundaryBox(glm::vec3(2.0f, 0.5f, 0.0f), glm::vec3(2.5f, 1.0f, 0.5f), glm::vec3(1.5f, 0.0f, -0.5f));//COLLISIONS
+BoundaryBox sphereBox = BoundaryBox(glm::vec3(-2.0f, 0.5f, 0.0f), glm::vec3(-1.5f, 1.0f, 0.5f), glm::vec3(-2.5f, 0.0f, -0.5f));//COLLISIONS
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -314,11 +379,20 @@ void updateSceneElements() {
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 
 	// Calculate Cube position
+	if (cubeBox.detect_collision(sphereBox)) {//COLLISIONS {
+		test_collision = -0.03f;
+	}//COLLISIONS
+
+	cube_x -= test_collision;
 	glm::mat4 mv_matrix_cube =
-		glm::translate(glm::vec3(2.0f, 0.5f, 0.0f)) *
+		glm::translate(glm::vec3(cube_x, 0.5f, 0.0f)) *
 		glm::mat4(1.0f);
 	myCube.mv_matrix = myGraphics.viewMatrix * mv_matrix_cube;
 	myCube.proj_matrix = myGraphics.proj_matrix;
+
+	cubeBox.center.x -= test_collision;//COLLISIONS
+	cubeBox.max_position.x -= test_collision;//COLLISIONS
+	cubeBox.min_position.x -= test_collision;//COLLISIONS
 
 	// calculate Sphere movement
 	glm::mat4 mv_matrix_sphere =
