@@ -41,7 +41,7 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 
 // Objects
 Cube        myFloor;
-Player		player(2.0f, 0.5f, 0.0f);
+Player		player;
 //Cube        myCube;
 
 // Some global variable to do the animation.
@@ -53,9 +53,7 @@ int main()
 	int errorGraphics = myGraphics.Init();			// Launch window and graphics context
 	if (errorGraphics) return 0;					// Close if something went wrong...
 
-	startup(player);										// Setup all necessary information for startup (aka. load texture, shaders, models, etc).
-
-
+	startup(player);										// Setup all necessary information for startup (aka. load texture, shaders, models, etc).s
 
 	// MAIN LOOP run until the window is closed
 	while (!quit) {
@@ -104,7 +102,6 @@ void startup(Player& player) {
 	//myCube.Load();
 
 	player.init();
-	cout << "Le x du joueur est " << player.x << endl;
 	
 	myFloor.Load();
 	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
@@ -171,11 +168,7 @@ void updateSceneElements(Player& player) {
 
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 
-	glm::mat4 pos_player =
-		glm::translate(glm::vec3(2.0f, 0.5f, 0.0f)) *
-		glm::mat4(1.0f);
-	player.character.mv_matrix = myGraphics.viewMatrix * pos_player;
-	player.character.proj_matrix = myGraphics.proj_matrix;
+	player.set_in_space(myGraphics);
 
 	// Calculate floor position and resize
 	myFloor.mv_matrix = myGraphics.viewMatrix *

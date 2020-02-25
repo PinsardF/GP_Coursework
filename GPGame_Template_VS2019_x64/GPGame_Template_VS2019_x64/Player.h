@@ -11,11 +11,12 @@ public:
 	Cube		character;
 	Graphics    graphics;
 	bool        keysStatus[1024];
-	glm::mat4	pos_char;
+	glm::mat4	pos_player;
 
-	Player(float input_x, float input_y, float input_z);
+	Player();
 	//~Player();
 	void init();
 	void render_character();
+	void set_in_space(Graphics myGraphics);
 	void move();
 };
