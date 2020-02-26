@@ -1,20 +1,5 @@
 ﻿  GPGame_Template_VS2019_x64.cpp
-  graphics.cpp
-  shapes.cpp
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(28,39): warning C4267: 'initialisation' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(28,91): warning C4267: 'initialisation' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(31,72): warning C4267: '=' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(34,72): warning C4267: '=' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(42,39): warning C4267: 'initialisation' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(42,91): warning C4267: 'initialisation' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(45,72): warning C4267: '=' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(48,72): warning C4267: '=' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(55,40): warning C4267: 'initialisation' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(55,94): warning C4267: 'initialisation' : conversion de 'size_t' en 'int', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(154,58): warning C4267: 'argument' : conversion de 'size_t' en 'GLsizei', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\shapes.cpp(158,58): warning C4267: 'argument' : conversion de 'size_t' en 'GLsizei', perte possible de données
+  ParticleEmitter.cpp
   Génération de code en cours...
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64.cpp(117): warning C4715: 'Particle::update' : les chemins de contrôle ne retournent pas tous une valeur
-  LINK : C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\x64\Debug\GPGame_Template_VS2019_x64.exe introuvable ou non généré par la dernière édition de liens incrémentielle ; édition de liens complète en cours
-LINK : warning LNK4098: conflit entre la bibliothèque par défaut 'MSVCRT' et les autres bibliothèques ; utilisez /NODEFAULTLIB:library
+LINK : warning LNK4098: conflit entre la bibliothÞque par dÚfaut 'MSVCRT' et les autres bibliothÞquesá; utilisez /NODEFAULTLIB:library
   GPGame_Template_VS2019_x64.vcxproj -> C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\x64\Debug\GPGame_Template_VS2019_x64.exe

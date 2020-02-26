@@ -52,125 +52,9 @@ float		cube_x = 2.0f;
 Graphics    myGraphics;        // Runing all the graphics in this object
 
 //Classes
-class Particle {
-public:
-	int timetolive;
-	glm::vec3 vector;
-	bool isalive;
-	Line visualParticle;
 
-	Particle(int input_timetolive, glm::vec3 input_vector, bool input_isalive) {
-		timetolive = input_timetolive;
-		vector.x = input_vector.x;
-		vector.y = input_vector.y;
-		vector.z = input_vector.z;
-		isalive = input_isalive;
-	}
-	Particle() : timetolive(200), vector(glm::vec3(0.0f, 0.0f, 0.0f)), isalive(true) {}
-
-	void init() {
-		Line* visualParticle_p = new Line;
-		visualParticle = *visualParticle_p;
-		visualParticle.Load();
-		visualParticle.fillColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		visualParticle.lineColor = glm::vec4(0.2f, 1.0f, 0.8f, 1.0f);
-		visualParticle.lineWidth = 5.0f;
-	}
-
-	glm::mat4 update() {
-		if (timetolive > 0.0f) {
-			int x_rand = rand() % 10;
-			float x_deviation = 0.0f;
-			switch (x_rand) {
-			case 0:
-				x_deviation = 0.03f;
-				break;
-			case 1:
-				x_deviation = -0.03f;
-				break;
-			default:
-				break;
-			}
-			int z_rand = rand() % 10;
-			float z_deviation = 0.0f;
-			switch (z_rand) {
-			case 0:
-				z_deviation = 0.03f;
-				break;
-			case 1:
-				z_deviation = -0.03f;
-				break;
-			default:
-				break;
-			}
-
-			vector.x += x_deviation;
-			vector.y += 0.01f;
-			vector.z += z_deviation;
-			timetolive--;
-			glm::mat4 mv_particle =
-				glm::translate(vector) *
-				glm::scale(glm::vec3(200.0f, 200.0f, 0.03f)) *
-				glm::mat4(1.0f);
-			return mv_particle;
-		}
-	}
-
-	void destroy() {//unused for now
-		delete this;
-	}
-};
-
-class ParticleEmitter {
-public:
-	glm::vec3 vector;
-	int reloadtime;
-	//Particle emittedparticle;
-	Particle particlesList[6];
-
-	ParticleEmitter(glm::vec3 input_vector, int input_reloadtime) {
-		vector.x = input_vector.x;
-		vector.y = input_vector.y;
-		vector.z = input_vector.z;
-		reloadtime = input_reloadtime;
-	}
-	ParticleEmitter() : vector(glm::vec3(-1.0f, 0.0f, -1.0f)), reloadtime(40) {};
-
-	void initparticle() {
-		/*int listSize = sizeof(particlesList);
-		if (listSize == 0) {
-			Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
-			newParticle.init();
-			particlesList[0] = newParticle;
-		}
-		else if (listSize == 1) {
-			Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
-			newParticle.init();
-			particlesList[1] = newParticle;
-		}*/
-		/*if (listSize < 6) {
-			//emittedparticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
-			Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
-			//emittedparticle.init();
-			newParticle.init();
-			particlesList[listSize] = newParticle;
-		}*/
-		Particle newParticle = Particle(150 + rand() % 150, glm::vec3(-1.0f, 0.0f, -1.0f), true);
-		newParticle.init();
-		particlesList[0] = newParticle;
-	}
-	void update() {
-		if (!particlesList[0].isalive) {
-			if (reloadtime <= 0) {
-				initparticle();
-				reloadtime = rand() % 50;
-			}
-			else {
-				reloadtime--;
-			}
-		}
-	}
-};
+#include "Particle.h"
+#include "ParticleEmitter.h"
 
 class BoundaryBox {//COLLISIONS
 public:
@@ -382,6 +266,9 @@ void updateSceneElements() {
 	if (cubeBox.detect_collision(sphereBox)) {//COLLISIONS {
 		test_collision = -0.03f;
 	}//COLLISIONS
+	if (cube_x > 3.0f) {
+		test_collision = 0.0f;
+	}
 
 	cube_x -= test_collision;
 	glm::mat4 mv_matrix_cube =
@@ -447,10 +334,10 @@ void updateSceneElements() {
 		glm::mat4(1.0f);
 	myLine.proj_matrix = myGraphics.proj_matrix;
 
-	if (emitter.particlesList[0].isalive) {
-		glm::mat4 mv_particle = emitter.particlesList[0].update();
-		emitter.particlesList[0].visualParticle.mv_matrix = myGraphics.viewMatrix * mv_particle;
-		emitter.particlesList[0].visualParticle.proj_matrix = myGraphics.proj_matrix;
+	if (emitter.emittedparticle.isalive) {
+		glm::mat4 mv_particle = emitter.emittedparticle.update();
+		emitter.emittedparticle.visualParticle.mv_matrix = myGraphics.viewMatrix * mv_particle;
+		emitter.emittedparticle.visualParticle.proj_matrix = myGraphics.proj_matrix;
 	}
 	emitter.update();
 
@@ -477,11 +364,11 @@ void renderScene() {
 	myLine.Draw();
 	myCylinder.Draw();
 
-	if (emitter.particlesList[0].timetolive <= 0.0f) {
-		emitter.particlesList[0].isalive = false;
+	if (emitter.emittedparticle.timetolive <= 0.0f) {
+		emitter.emittedparticle.isalive = false;
 	}
-	if (emitter.particlesList[0].isalive) {
-		emitter.particlesList[0].visualParticle.Draw();
+	if (emitter.emittedparticle.isalive) {
+		emitter.emittedparticle.visualParticle.Draw();
 	}
 }
 
