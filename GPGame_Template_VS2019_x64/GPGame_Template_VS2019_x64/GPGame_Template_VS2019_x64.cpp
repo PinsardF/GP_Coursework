@@ -12,6 +12,7 @@ using namespace std;
 #include "graphics.h"
 #include "shapes.h"
 #include <vector>
+#include "glm/ext.hpp"
 
 // Personal classes
 #include "Player.h"
@@ -187,7 +188,7 @@ void updateSceneElements(Player& player) {
 	myFloor.proj_matrix = myGraphics.proj_matrix;
 
 	glm::mat4 mv_matrix_arena =
-		glm::translate(glm::vec3(0.0f, 0.001f, 0.5f)) *
+		glm::translate(glm::vec3(0.0f, 0.003f, 0.5f)) *
 		glm::scale(glm::vec3(17.0f, 0.001f, 17.0f)) *
 		glm::mat4(1.0f);
 	arena.mv_matrix = myGraphics.viewMatrix * mv_matrix_arena;

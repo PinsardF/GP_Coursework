@@ -24,9 +24,9 @@ bool        keysStatus[1024];
 glm::mat4    pos_player;
 
 Player::Player() {
-	x = 2.0f;
+	x = -0.0789977f;
 	y = 0.5f;
-	z = 0.0f;
+	z = 0.28f;
 	pos_player =
 		glm::translate(glm::vec3(x, y, z)) *
 		glm::mat4(1.0f);
