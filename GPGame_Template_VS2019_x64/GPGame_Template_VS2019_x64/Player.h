@@ -17,6 +17,6 @@ public:
 	//~Player();
 	void init();
 	void render_character();
-	void set_in_space(Graphics myGraphics);
-	void move();
+	void set_in_space(Graphics graphics);
+	void move(Graphics graphics, bool* keyStatus);
 };

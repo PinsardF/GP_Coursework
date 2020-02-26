@@ -41,8 +41,8 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 
 // Objects
 Cube        myFloor;
+Cube        arena;
 Player		player;
-//Cube        myCube;
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -99,10 +99,9 @@ void startup(Player& player) {
 	myGraphics.aspect = (float)myGraphics.windowWidth / (float)myGraphics.windowHeight;
 	myGraphics.proj_matrix = glm::perspective(glm::radians(50.0f), myGraphics.aspect, 0.1f, 1000.0f);
 
-	//myCube.Load();
-
 	player.init();
-	
+	arena.Load();
+	arena.fillColor = glm::vec4(130.0f, 96.0f, 61.0f, 1.0f);    // Sand Colour
 	myFloor.Load();
 	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
 	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
@@ -167,8 +166,18 @@ void updateSceneElements(Player& player) {
 	lastTime = currentTime;                            // Save for next frame calculations.
 
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
-
-	player.set_in_space(myGraphics);
+	
+	// Player's movements
+	if (keyStatus[GLFW_KEY_UP]) player.z += 0.007f;
+	if (keyStatus[GLFW_KEY_LEFT]) player.x += 0.007f;
+	if (keyStatus[GLFW_KEY_DOWN]) player.z -= 0.007f;
+	if (keyStatus[GLFW_KEY_RIGHT]) player.x -= 0.007f;
+	
+	glm::mat4 pos_player =
+		glm::translate(glm::vec3(player.x, player.y, player.z)) *
+		glm::mat4(1.0f);
+	player.character.mv_matrix = myGraphics.viewMatrix * pos_player;
+	player.character.proj_matrix = myGraphics.proj_matrix;
 
 	// Calculate floor position and resize
 	myFloor.mv_matrix = myGraphics.viewMatrix *
@@ -176,6 +185,13 @@ void updateSceneElements(Player& player) {
 		glm::scale(glm::vec3(1000.0f, 0.001f, 1000.0f)) *
 		glm::mat4(1.0f);
 	myFloor.proj_matrix = myGraphics.proj_matrix;
+
+	glm::mat4 mv_matrix_arena =
+		glm::translate(glm::vec3(0.0f, 0.001f, 0.5f)) *
+		glm::scale(glm::vec3(17.0f, 0.001f, 17.0f)) *
+		glm::mat4(1.0f);
+	arena.mv_matrix = myGraphics.viewMatrix * mv_matrix_arena;
+	arena.proj_matrix = myGraphics.proj_matrix;
 
 	t += 0.01f; // increment movement variables
 
@@ -189,6 +205,7 @@ void renderScene(Player& player) {
 	// Draw objects in screen
 	myFloor.Draw();
 	player.render_character();
+	arena.Draw();
 
 	/*if (emitter.particlesList[0].timetolive <= 0.0f) {
 		emitter.particlesList[0].isalive = false;
