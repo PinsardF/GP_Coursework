@@ -45,8 +45,8 @@ float       deltaTime = 0.0f;    // Keep track of time per frame.
 float       lastTime = 0.0f;    // variable to keep overall time.
 bool        keyStatus[1024];    // Hold key status.
 bool		mouseEnabled = true; // keep track of mouse toggle.
-float		test_collision = 0.03f;
-float		cube_x = 2.0f;
+float		test_collision = 0.03f;//TEST VALUES FOR COLLISIONS
+float		cube_x = 2.0f;//TEST VALUES FOR COLLISIONS
 
 // MAIN GRAPHICS OBJECT
 Graphics    myGraphics;        // Runing all the graphics in this object
@@ -55,56 +55,7 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 
 #include "Particle.h"
 #include "ParticleEmitter.h"
-
-class BoundaryBox {//COLLISIONS
-public:
-	glm::vec3 center;
-	glm::vec3 max_position;
-	glm::vec3 min_position;
-
-	BoundaryBox(glm::vec3 input_center, glm::vec3 input_max, glm::vec3 input_min) {
-		center = input_center;
-		max_position = input_max;
-		min_position = input_min;
-	}
-	BoundaryBox() : center(glm::vec3(0.0f, 0.0f, 0.0f)), max_position(glm::vec3(1.0f, 1.0f, 1.0f)),
-		min_position(glm::vec3(-1.0f, -1.0f, -1.0f)) {}
-
-	bool detect_collision(BoundaryBox other_object) {
-		if (max_position.x >= other_object.min_position.x && min_position.x <= other_object.max_position.x &&
-			max_position.y >= other_object.min_position.y && min_position.y <= other_object.max_position.y &&
-			max_position.z >= other_object.min_position.z && min_position.z <= other_object.max_position.z) {
-			return true;
-		}
-		/*if (min_position.x < other_object.max_position.x) {
-			return true;
-		}*/
-		return false;
-	}
-
-	glm::vec3 center_of_collision(BoundaryBox other_object) {
-		glm::vec3 collisionCenter = glm::vec3(0.0f, 0.0f, 0.0f);
-		if (abs(max_position.x - other_object.min_position.x) <= abs(min_position.x - other_object.max_position.x)) {
-			collisionCenter.x = (max_position.x + other_object.min_position.x) / 2;
-		}
-		else {
-			collisionCenter.x = (min_position.x + other_object.max_position.x) / 2;
-		}
-		if (abs(max_position.y - other_object.min_position.y) <= abs(min_position.y - other_object.max_position.y)) {
-			collisionCenter.y = (max_position.y + other_object.min_position.y) / 2;
-		}
-		else {
-			collisionCenter.y = (min_position.y + other_object.max_position.y) / 2;
-		}
-		if (abs(max_position.z - other_object.min_position.z) <= abs(min_position.z - other_object.max_position.z)) {
-			collisionCenter.z = (max_position.z + other_object.min_position.z) / 2;
-		}
-		else {
-			collisionCenter.z = (min_position.z + other_object.max_position.z) / 2;
-		}
-		return collisionCenter;
-	}
-};
+#include "BoundaryBox.h"
 
 // DEMO OBJECTS
 Cube        myCube;
@@ -334,12 +285,7 @@ void updateSceneElements() {
 		glm::mat4(1.0f);
 	myLine.proj_matrix = myGraphics.proj_matrix;
 
-	if (emitter.emittedparticle.isalive) {
-		glm::mat4 mv_particle = emitter.emittedparticle.update();
-		emitter.emittedparticle.visualParticle.mv_matrix = myGraphics.viewMatrix * mv_particle;
-		emitter.emittedparticle.visualParticle.proj_matrix = myGraphics.proj_matrix;
-	}
-	emitter.update();
+	emitter.update(myGraphics);
 
 	t += 0.01f; // increment movement variable
 
@@ -364,11 +310,10 @@ void renderScene() {
 	myLine.Draw();
 	myCylinder.Draw();
 
-	if (emitter.emittedparticle.timetolive <= 0.0f) {
-		emitter.emittedparticle.isalive = false;
-	}
-	if (emitter.emittedparticle.isalive) {
-		emitter.emittedparticle.visualParticle.Draw();
+	for (int i = 0; i < emitter.particlesList.size(); i++) {
+		if (emitter.particlesList[i].isalive) {
+			emitter.particlesList[i].visualParticle.Draw();
+		}
 	}
 }
 

@@ -11,7 +11,7 @@ public:
 	Particle();
 	Particle(int input_timetolive, glm::vec3 input_vector, bool input_isalive);
 	void init();
-	glm::mat4 update();
+	void update(Graphics graphics);
 	void destroy();
 };
 

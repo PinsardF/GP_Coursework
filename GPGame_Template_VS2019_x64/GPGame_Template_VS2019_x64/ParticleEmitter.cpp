@@ -17,41 +17,43 @@ using namespace std;
 #include "ParticleEmitter.h"
 #include "Particle.h"
 
-glm::vec3 vector;
+glm::vec3 emitterPosition;
 int reloadtime;
-Particle emittedparticle;
-//Particle particlesList[6];
+std::vector<Particle> particlesList;
 
 ParticleEmitter::ParticleEmitter(glm::vec3 input_vector, int input_reloadtime) {
-	vector.x = input_vector.x;
-	vector.y = input_vector.y;
-	vector.z = input_vector.z;
+	emitterPosition.x = input_vector.x;
+	emitterPosition.y = input_vector.y;
+	emitterPosition.z = input_vector.z;
 	reloadtime = input_reloadtime;
 }
 
-ParticleEmitter::ParticleEmitter() : vector(glm::vec3(-1.0f, 0.0f, -1.0f)), reloadtime(40) {};
+ParticleEmitter::ParticleEmitter() : emitterPosition(glm::vec3(-1.0f, 0.0f, -1.0f)), reloadtime(75) {};
 
 void ParticleEmitter::initparticle() {
-	//if (listSize < 6) {
-	//	//emittedparticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
-	//	Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
-	//	//emittedparticle.init();
-	//	newParticle.init();
-	//	particlesList[listSize] = newParticle;
-	//}
 	Particle newParticle = Particle(150 + rand() % 150, glm::vec3(-1.0f, 0.0f, -1.0f), true);
 	newParticle.init();
-	emittedparticle = newParticle;
+	particlesList.push_back(newParticle);
 }
 
-void ParticleEmitter::update() {
-	if (!emittedparticle.isalive) {
-		if (reloadtime <= 0) {
-			initparticle();
-			reloadtime = rand() % 50;
+void ParticleEmitter::update(Graphics graphics) {
+	for (int i = 0; i < particlesList.size(); i++) {//considering each particle...
+		if (particlesList[i].timetolive <= 0.0f) {//if its lifetime is over, the particle dies
+			particlesList[i].isalive = false;
 		}
-		else {
-			reloadtime--;
+		if (!particlesList[i].isalive) {//if it's dead we delete it in the list
+			particlesList.erase(particlesList.begin()+i);
 		}
+		else {//if it's still alive we update its position
+			particlesList[i].update(graphics);
+		}
+	}
+
+	if (reloadtime <= 0 && particlesList.size() < 10) {//if the number of particle is below the chosen one...
+		initparticle();//we create a particle
+		reloadtime = rand() % 50;//we reset the reloadTime
+	}
+	else {//else we just decrease the reloadTime
+		reloadtime--;
 	}
 }

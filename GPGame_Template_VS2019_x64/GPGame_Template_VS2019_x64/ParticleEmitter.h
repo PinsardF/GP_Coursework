@@ -1,15 +1,16 @@
 #include "Particle.h"
+#include <vector>
+#include <iostream>
 #pragma once
 class ParticleEmitter{
 public:
-	glm::vec3 vector;
+	glm::vec3 emitterPosition;
 	int reloadtime;
-	Particle emittedparticle;
-	//Particle particlesList[6];
+	std::vector<Particle> particlesList;
 
 	ParticleEmitter(glm::vec3 input_vector, int input_reloadtime);
 	ParticleEmitter();
 	void initparticle();
-	void update();
+	void update(Graphics graphics);
 };
 
