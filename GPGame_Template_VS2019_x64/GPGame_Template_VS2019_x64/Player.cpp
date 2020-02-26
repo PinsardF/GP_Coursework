@@ -24,9 +24,9 @@ bool        keysStatus[1024];
 glm::mat4    pos_player;
 
 Player::Player() {
-	x = -0.0789977f;
+	x = 0.0f;
 	y = 0.5f;
-	z = 0.28f;
+	z = 0.0f;
 	pos_player =
 		glm::translate(glm::vec3(x, y, z)) *
 		glm::mat4(1.0f);
@@ -41,6 +41,7 @@ void Player::init() {
 	Cube* visualPlayer = new Cube;
 	character = *visualPlayer;
 	character.Load();
+	character.fillColor = glm::vec4(0.0f, 0.0f, 255.0f, 1.0f); // Blue color
 }
 
 void Player::render_character() {

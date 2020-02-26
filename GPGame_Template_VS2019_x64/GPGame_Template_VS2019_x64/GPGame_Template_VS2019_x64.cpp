@@ -44,6 +44,8 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 Cube        myFloor;
 Cube        arena;
 Player		player;
+Cube wall_N[19];
+Cube wall_S[19];
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -102,10 +104,18 @@ void startup(Player& player) {
 
 	player.init();
 	arena.Load();
-	arena.fillColor = glm::vec4(130.0f, 96.0f, 61.0f, 1.0f);    // Sand Colour
+	arena.fillColor = glm::vec4(130.0f, 96.0f, 61.0f, 1.0f);    // White Colour
 	myFloor.Load();
 	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
 	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
+
+	for (int i = 0; i < size(wall_N); i++) {
+		wall_N[i].fillColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);    // White Colour
+		wall_S[i].fillColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);    // White Colour
+
+		wall_N[i].Load();
+		wall_S[i].Load();
+	}
 
 	// emitter.initparticle();
 
@@ -142,7 +152,7 @@ void updateCamera() {
 	myGraphics.cameraFront = glm::normalize(front);
 
 	// Update movement using the keys
-	GLfloat cameraSpeed = 1.0f * deltaTime;
+	GLfloat cameraSpeed = 3.0f * deltaTime;
 	if (keyStatus[GLFW_KEY_W]) myGraphics.cameraPosition += cameraSpeed * myGraphics.cameraFront;
 	if (keyStatus[GLFW_KEY_S]) myGraphics.cameraPosition -= cameraSpeed * myGraphics.cameraFront;
 	if (keyStatus[GLFW_KEY_A]) myGraphics.cameraPosition -= glm::normalize(glm::cross(myGraphics.cameraFront, myGraphics.cameraUp)) * cameraSpeed;
@@ -188,11 +198,31 @@ void updateSceneElements(Player& player) {
 	myFloor.proj_matrix = myGraphics.proj_matrix;
 
 	glm::mat4 mv_matrix_arena =
-		glm::translate(glm::vec3(0.0f, 0.003f, 0.5f)) *
+		glm::translate(glm::vec3(0.0f, 0.003f, 0.0f)) *
 		glm::scale(glm::vec3(17.0f, 0.001f, 17.0f)) *
 		glm::mat4(1.0f);
 	arena.mv_matrix = myGraphics.viewMatrix * mv_matrix_arena;
 	arena.proj_matrix = myGraphics.proj_matrix;
+
+	glm::mat4 mv_matrix_wall_N, mv_matrix_wall_S;
+	float original_x = 9.0f;
+	float original_z = 8.0f;
+
+	for (int i = 0; i < size(wall_N); i++) {
+		mv_matrix_wall_N =
+			glm::translate(glm::vec3(original_x, 0.5f, 9.0f)) *
+			glm::mat4(1.0f);
+		wall_N[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_N;
+		wall_N[i].proj_matrix = myGraphics.proj_matrix;
+		
+		mv_matrix_wall_S =
+			glm::translate(glm::vec3(original_x, 0.5f, -9.0f)) *
+			glm::mat4(1.0f);
+		wall_S[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_S;
+		wall_S[i].proj_matrix = myGraphics.proj_matrix;
+
+		original_x--;
+	}
 
 	t += 0.01f; // increment movement variables
 
@@ -207,6 +237,11 @@ void renderScene(Player& player) {
 	myFloor.Draw();
 	player.render_character();
 	arena.Draw();
+	
+	for (int i = 0; i < size(wall_N); i++) {
+		wall_N[i].Draw();
+		wall_S[i].Draw();
+	}
 
 	/*if (emitter.particlesList[0].timetolive <= 0.0f) {
 		emitter.particlesList[0].isalive = false;
