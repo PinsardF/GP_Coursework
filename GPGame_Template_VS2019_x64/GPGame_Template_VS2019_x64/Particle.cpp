@@ -18,18 +18,10 @@ using namespace std;
 
 int timetolive;
 glm::vec3 position;
-glm::vec3 velocity;//
+glm::vec3 velocity;
 //glm::vec3 acceleration;
 bool isalive;
 Line visualParticle;
-
-/*Particle::Particle(int input_timetolive, glm::vec3 input_vector, bool input_isalive) {
-	timetolive = input_timetolive;
-	position.x = input_vector.x;
-	position.y = input_vector.y;
-	position.z = input_vector.z;
-	isalive = input_isalive;
-}*/
 
 Particle::Particle(int input_timetolive, glm::vec3 input_position, glm::vec3 input_velocity, bool input_isalive) {
 	timetolive = input_timetolive;
@@ -41,8 +33,6 @@ Particle::Particle(int input_timetolive, glm::vec3 input_position, glm::vec3 inp
 	velocity.z = input_velocity.z;
 	isalive = input_isalive;
 }
-
-//Particle::Particle() : timetolive(200), position(glm::vec3(0.0f, 0.0f, 0.0f)), isalive(true) {}
 
 Particle::Particle() : timetolive(200), position(glm::vec3(0.0f, 0.0f, 0.0f)), velocity(glm::vec3(0.0f,0.0f,0.0f)),
 isalive(true) {}
@@ -107,11 +97,11 @@ void Particle::update(Graphics graphics) {
 		float x_deviation = rand() % 10;//it randomly deviates on the x and z axis
 		float x_sign = rand() % 2;
 		if (x_sign > 0) x_deviation = -x_deviation;
-		x_deviation /= 100;
+		x_deviation /= 200;
 		float z_deviation = rand() % 10;
 		float z_sign = rand() % 2;
 		if (z_sign > 0) z_deviation = -z_deviation;
-		z_deviation /= 100;
+		z_deviation /= 200;
 		velocity = glm::vec3(x_deviation, 0.01f, z_deviation);
 		position.x += velocity.x;
 		position.y += velocity.y;

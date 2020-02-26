@@ -53,9 +53,9 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 
 //Classes
 
-#include "Particle.h"
 #include "ParticleEmitter.h"
 #include "BoundaryBox.h"
+#include "ExplosionEmitter.h"
 
 // DEMO OBJECTS
 Cube        myCube;
@@ -68,6 +68,7 @@ Line        myLine;
 Cylinder    myCylinder;
 
 ParticleEmitter emitter = ParticleEmitter();
+ExplosionEmitter boom = ExplosionEmitter(glm::vec3(2.0f,0.5f,2.0f),10);
 BoundaryBox cubeBox = BoundaryBox(glm::vec3(2.0f, 0.5f, 0.0f), glm::vec3(2.5f, 1.0f, 0.5f), glm::vec3(1.5f, 0.0f, -0.5f));//COLLISIONS
 BoundaryBox sphereBox = BoundaryBox(glm::vec3(-2.0f, 0.5f, 0.0f), glm::vec3(-1.5f, 1.0f, 0.5f), glm::vec3(-2.5f, 0.0f, -0.5f));//COLLISIONS
 
@@ -153,6 +154,7 @@ void startup() {
 	myLine.lineWidth = 5.0f;
 
 	emitter.initparticle();
+	boom.initExplosion();
 
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
@@ -286,6 +288,7 @@ void updateSceneElements() {
 	myLine.proj_matrix = myGraphics.proj_matrix;
 
 	emitter.update(myGraphics);
+	boom.update(myGraphics);
 
 	t += 0.01f; // increment movement variable
 
@@ -313,6 +316,12 @@ void renderScene() {
 	for (int i = 0; i < emitter.particlesList.size(); i++) {
 		if (emitter.particlesList[i].isalive) {
 			emitter.particlesList[i].visualParticle.Draw();
+		}
+	}
+
+	for (int i = 0; i < boom.explosionParticlesList.size(); i++) {
+		if (boom.explosionParticlesList[i].explosionIsalive) {
+			boom.explosionParticlesList[i].explosionVisualParticle.Draw();
 		}
 	}
 }

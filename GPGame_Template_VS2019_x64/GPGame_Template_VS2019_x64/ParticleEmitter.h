@@ -1,6 +1,4 @@
 #include "Particle.h"
-#include <vector>
-#include <iostream>
 #pragma once
 class ParticleEmitter{
 public:
