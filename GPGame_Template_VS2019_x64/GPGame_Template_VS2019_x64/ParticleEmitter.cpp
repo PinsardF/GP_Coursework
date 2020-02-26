@@ -31,7 +31,7 @@ ParticleEmitter::ParticleEmitter(glm::vec3 input_vector, int input_reloadtime) {
 ParticleEmitter::ParticleEmitter() : emitterPosition(glm::vec3(-1.0f, 0.0f, -1.0f)), reloadtime(75) {};
 
 void ParticleEmitter::initparticle() {
-	Particle newParticle = Particle(150 + rand() % 150, glm::vec3(-1.0f, 0.0f, -1.0f), true);
+	Particle newParticle = Particle(150 + rand() % 150, glm::vec3(-1.0f, 0.0f, -1.0f),glm::vec3(0.0f,0.0f,0.0f),true);
 	newParticle.init();
 	particlesList.push_back(newParticle);
 }

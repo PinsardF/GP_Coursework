@@ -1,11 +1,10 @@
-﻿  BoundaryBox.cpp
-  GPGame_Template_VS2019_x64.cpp
-  Particle.cpp
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(38,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(40,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(42,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
-C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(44,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
-  ParticleEmitter.cpp
-  Génération de code en cours...
-LINK : warning LNK4098: conflit entre la bibliothÞque par dÚfaut 'MSVCRT' et les autres bibliothÞquesá; utilisez /NODEFAULTLIB:library
+﻿  Particle.cpp
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(52,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(54,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(56,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(58,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(107,21): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(108,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(111,21): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Particle.cpp(112,16): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
   GPGame_Template_VS2019_x64.vcxproj -> C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\x64\Debug\GPGame_Template_VS2019_x64.exe
