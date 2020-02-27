@@ -16,18 +16,16 @@ using namespace std;
 #include <vector>
 #include "Player.h"
 
-float		x;
-float		y;
-float		z;
+glm::vec3	position;
 Cube		character;
-glm::mat4    pos_player;
+glm::mat4	pos_player;
 
 Player::Player() {
-	x = 0.0f;
-	y = 0.5f;
-	z = 0.0f;
+	position.x = 0.0f;
+	position.y = 0.5f;
+	position.z = 0.0f;
 	pos_player =
-		glm::translate(glm::vec3(x, y, z)) *
+		glm::translate(glm::vec3(position.x, position.y, position.z)) *
 		glm::mat4(1.0f);
 }
 
@@ -37,8 +35,6 @@ Player::Player() {
 }*/
 
 void Player::init() {
-	Cube* visualPlayer = new Cube;
-	character = *visualPlayer;
 	character.Load();
 	character.fillColor = glm::vec4(0.0f, 0.0f, 255.0f, 1.0f); // Blue color
 }

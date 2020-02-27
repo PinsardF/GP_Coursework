@@ -10,6 +10,7 @@ public:
 	Cube wall_E[17];
 	Cube wall_O[17];
 	Cube arena;
+	char shot_direction;
 
 	Arena();
 	//~Arena();

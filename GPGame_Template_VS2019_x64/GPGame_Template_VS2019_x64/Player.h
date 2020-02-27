@@ -5,9 +5,7 @@ using namespace std;
 class Player
 {
 public:
-	float		x;
-	float		y;
-	float		z;
+	glm::vec3	position;
 	Cube		character;
 	Graphics    graphics;
 	glm::mat4	pos_player;

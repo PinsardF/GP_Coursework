@@ -42,9 +42,11 @@ bool		mouseEnabled = true; // keep track of mouse toggle.
 Graphics    myGraphics;        // Runing all the graphics in this object
 
 // Objects
-Cube        myFloor;
-Player		player;
-Arena		arena;
+Cube    myFloor;
+Player	player;
+Arena	arena;
+int		step = 0, flashing_time = 0, shot_direction_picker = 0, th_cube = 0;
+char	walls[4] = { 'N','S','E','O' };
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -168,13 +170,13 @@ void updateSceneElements(Player& player) {
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 	
 	// Player's movements
-	if (keyStatus[GLFW_KEY_UP]) player.z += 0.007f;
-	if (keyStatus[GLFW_KEY_LEFT]) player.x += 0.007f;
-	if (keyStatus[GLFW_KEY_DOWN]) player.z -= 0.007f;
-	if (keyStatus[GLFW_KEY_RIGHT]) player.x -= 0.007f;
+	if (keyStatus[GLFW_KEY_UP]) player.position.z += 0.007f;
+	if (keyStatus[GLFW_KEY_LEFT]) player.position.x += 0.007f;
+	if (keyStatus[GLFW_KEY_DOWN]) player.position.z -= 0.007f;
+	if (keyStatus[GLFW_KEY_RIGHT]) player.position.x -= 0.007f;
 	
 	glm::mat4 pos_player =
-		glm::translate(glm::vec3(player.x, player.y, player.z)) *
+		glm::translate(glm::vec3(player.position.x, player.position.y, player.position.z)) *
 		glm::mat4(1.0f);
 	player.character.mv_matrix = myGraphics.viewMatrix * pos_player;
 	player.character.proj_matrix = myGraphics.proj_matrix;
@@ -215,13 +217,13 @@ void updateSceneElements(Player& player) {
 
 	for (int i = 0; i < size(arena.wall_E); i++) {
 		mv_matrix_wall_E =
-			glm::translate(glm::vec3(9.0f, 0.5f, original_z)) *
+			glm::translate(glm::vec3(-9.0f, 0.5f, original_z)) *
 			glm::mat4(1.0f);
 		arena.wall_E[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_E;
 		arena.wall_E[i].proj_matrix = myGraphics.proj_matrix;
 
 		mv_matrix_wall_O =
-			glm::translate(glm::vec3(-9.0f, 0.5f, -original_z)) *
+			glm::translate(glm::vec3(9.0f, 0.5f, -original_z)) *
 			glm::mat4(1.0f);
 		arena.wall_O[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_O;
 		arena.wall_O[i].proj_matrix = myGraphics.proj_matrix;
@@ -242,6 +244,73 @@ void renderScene(Player& player) {
 	myFloor.Draw();
 	player.render_character();
 	arena.render_arena();
+
+	// FLASHING A CUBE
+
+	step++;
+	flashing_time++;
+
+	/*if (flashing_time < 1000) {
+		cout << flashing_time << "th step" << endl;
+		flashing_time++;
+	}
+	else if (flashing_time == 1000) {
+		cout << "FINISHED" << endl;
+		flashing_time++;
+	}
+
+	if (step == 200) player.character.fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+	else if (step == 400) {
+		player.character.fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+		step = 0;
+	}*/
+
+
+
+	// CHOOSING THE CUBE TO FLASH WITHIN A PICKED AREA
+
+	if (arena.shot_direction == 'v') { // Manage with time
+		srand(time(NULL));
+		arena.shot_direction = walls[rand() % 4];
+
+		if (arena.shot_direction == 'S' || arena.shot_direction == 'N') th_cube = rand() % 19;
+		else th_cube = rand() % 17;
+
+		cout << arena.shot_direction << " " << th_cube << endl;
+	}
+
+	switch (arena.shot_direction) {
+	case 'S':
+		if (step == 200) arena.wall_S[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+		else if (step == 400) {
+			arena.wall_S[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+			step = 0;
+		}
+		break;
+	case 'N':
+		if (step == 200) arena.wall_N[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+		else if (step == 400) {
+			arena.wall_N[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+			step = 0;
+		}
+		break;
+	case 'E':
+		if (step == 200) arena.wall_E[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+		else if (step == 400) {
+			arena.wall_E[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+			step = 0;
+		}
+		break;
+	case 'O':
+		if (step == 200) arena.wall_O[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+		else if (step == 400) {
+			arena.wall_O[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+			step = 0;
+		}
+		break;
+	default:
+		cout << "A problem has been occured" << endl;
+	}
 }
 
 
