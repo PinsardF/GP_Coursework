@@ -10,13 +10,10 @@ public:
 	float		z;
 	Cube		character;
 	Graphics    graphics;
-	bool        keysStatus[1024];
 	glm::mat4	pos_player;
 
 	Player();
 	//~Player();
 	void init();
 	void render_character();
-	void set_in_space(Graphics graphics);
-	void move(Graphics graphics, bool* keyStatus);
 };
