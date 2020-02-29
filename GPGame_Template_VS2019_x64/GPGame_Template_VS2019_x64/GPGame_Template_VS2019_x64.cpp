@@ -170,13 +170,13 @@ void updateSceneElements() {
 	lastTime = currentTime;                            // Save for next frame calculations.
 
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
-	
+
 	// Player's movements
 	if (keyStatus[GLFW_KEY_UP]) player.position.z += 0.007f;
 	if (keyStatus[GLFW_KEY_LEFT]) player.position.x += 0.007f;
 	if (keyStatus[GLFW_KEY_DOWN]) player.position.z -= 0.007f;
 	if (keyStatus[GLFW_KEY_RIGHT]) player.position.x -= 0.007f;
-	
+
 	glm::mat4 pos_player =
 		glm::translate(glm::vec3(player.position.x, player.position.y, player.position.z)) *
 		glm::mat4(1.0f);
@@ -201,13 +201,13 @@ void updateSceneElements() {
 	float original_x = 9.0f;
 	float original_z = 8.0f;
 
-	for (int i = 0; i < size(arena. wall_N); i++) {
+	for (int i = 0; i < size(arena.wall_N); i++) {
 		mv_matrix_wall_N =
 			glm::translate(glm::vec3(original_x, 0.5f, 9.0f)) *
 			glm::mat4(1.0f);
 		arena.wall_N[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_N;
 		arena.wall_N[i].proj_matrix = myGraphics.proj_matrix;
-		
+
 		mv_matrix_wall_S =
 			glm::translate(glm::vec3(original_x, 0.5f, -9.0f)) *
 			glm::mat4(1.0f);
