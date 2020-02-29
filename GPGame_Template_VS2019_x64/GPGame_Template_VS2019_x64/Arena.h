@@ -11,9 +11,11 @@ public:
 	Cube wall_O[17];
 	Cube arena;
 	char shot_direction;
+	glm::vec4 original_cube_color;
 
 	Arena();
 	//~Arena();
 	void init();
 	void render_arena();
+	void color_a_cube(int th_cube, glm::vec4 color);
 };

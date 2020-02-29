@@ -36,7 +36,7 @@ Player::Player() {
 
 void Player::init() {
 	character.Load();
-	character.fillColor = glm::vec4(0.0f, 0.0f, 255.0f, 1.0f); // Blue color
+	character.fillColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f); // Black color
 }
 
 void Player::render_character() {

@@ -43,10 +43,12 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 
 // Objects
 Cube    myFloor;
+Cube	flashing_cube;
 Player	player;
 Arena	arena;
-int		step = 0, flashing_time = 0, shot_direction_picker = 0, th_cube = 0;
+int		frozen = 0, flashing_time = 0, flash = 0, shot_direction_picker = 0, th_cube = 0;
 char	walls[4] = { 'N','S','E','O' };
+bool	throwing = false;
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -245,30 +247,11 @@ void renderScene() {
 	player.render_character();
 	arena.render_arena();
 
-	// FLASHING A CUBE
-
-	step++;
-	flashing_time++;
-
-	/*if (flashing_time < 1000) {
-		cout << flashing_time << "th step" << endl;
-		flashing_time++;
-	}
-	else if (flashing_time == 1000) {
-		cout << "FINISHED" << endl;
-		flashing_time++;
-	}
-
-	if (step == 200) player.character.fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-	else if (step == 400) {
-		player.character.fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-		step = 0;
-	}*/
 
 
 
-	// CHOOSING THE CUBE TO FLASH WITHIN A CHOOSEN AREA
 
+	// Choosing of a new cube to flash
 	if (arena.shot_direction == 'v') { // Manage with time
 		srand(time(NULL));
 		arena.shot_direction = walls[rand() % 4];
@@ -277,38 +260,35 @@ void renderScene() {
 		else th_cube = rand() % 17;
 	}
 
-	switch (arena.shot_direction) {
-	case 'S':
-		if (step == 200) arena.wall_S[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-		else if (step == 400) {
-			arena.wall_S[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-			step = 0;
+	// Flashing a cube and throw a projectile
+	if (frozen == 1500) { // When the break is finished ...
+
+		if (flashing_time < 800) { // Beginning of flashing
+			if (flash == 200) {
+				arena.color_a_cube(th_cube, glm::vec4(150.0f, 0.0f, 0.0f, 1.0f));
+				flash++;
+			}
+			else if (flash == 400) {
+				arena.color_a_cube(th_cube, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+				flash = 0;
+			}
+			else flash++;
+
+			flashing_time++;
 		}
-		break;
-	case 'N':
-		if (step == 200) arena.wall_N[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-		else if (step == 400) {
-			arena.wall_N[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-			step = 0;
+		else { // Flashing is finished and we throw a projectile
+			flashing_time = 0;
+			frozen = 0;
+			flash = 0;
+			arena.color_a_cube(th_cube, arena.original_cube_color); // Original color
+			arena.shot_direction = 'v';
+
+			// Throw projectile
+
+
 		}
-		break;
-	case 'E':
-		if (step == 200) arena.wall_E[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-		else if (step == 400) {
-			arena.wall_E[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-			step = 0;
-		}
-		break;
-	case 'O':
-		if (step == 200) arena.wall_O[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-		else if (step == 400) {
-			arena.wall_O[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-			step = 0;
-		}
-		break;
-	default:
-		cout << "A problem has been occured" << endl;
 	}
+	else frozen++;
 }
 
 

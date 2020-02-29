@@ -22,9 +22,11 @@ Cube wall_E[17];
 Cube wall_O[17];
 Cube arena;
 char shot_direction;
+glm::vec4 original_cube_color; // Original cubes' color
 
 Arena::Arena() {
-	shot_direction = 'v';
+	shot_direction = 'v'; // No direction chosen ('v' = 'vide' = 'empty')
+	original_cube_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 /*Player::~Player()
@@ -66,5 +68,24 @@ void Arena::render_arena() {
 	for (int i = 0; i < size(wall_E); i++) {
 		wall_E[i].Draw();
 		wall_O[i].Draw();
+	}
+}
+
+void Arena::color_a_cube(int th_cube, glm::vec4 color) {
+	switch (shot_direction) {
+	case 'S':
+		wall_S[th_cube].fillColor = color; // Dark red color;
+		break;
+	case 'N':
+		wall_N[th_cube].fillColor = color; // Dark red color;
+		break;
+	case 'E':
+		wall_E[th_cube].fillColor = color; // Dark red color;
+		break;
+	case 'O':
+		wall_O[th_cube].fillColor = color; // Dark red color;
+		break;
+	default:
+		cout << "A problem has been occured" << endl;
 	}
 }
