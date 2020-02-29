@@ -1,3 +1,19 @@
+// Standard C++ libraries
+//#include <iostream>
+//#include <vector>
+//using namespace std;
+//#include <string>
+
+// Helper graphic libraries
+//#include <GL/glew.h>
+
+//#include <GLFW/glfw3.h>
+//#include <glm/glm.hpp>
+//#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp>
+#include "graphics.h"
+//#include <vector>
+#include "shapes.h"
 #pragma once
 class ExplosionParticle{
 public:

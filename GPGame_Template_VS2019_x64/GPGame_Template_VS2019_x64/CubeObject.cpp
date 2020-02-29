@@ -1,20 +1,3 @@
-// Standard C++ libraries
-#include <iostream>
-#include <vector>
-using namespace std;
-#include <string>
-
-// Helper graphic libraries
-#include <GL/glew.h>
-
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/transform.hpp>
-#include "graphics.h"
-#include "shapes.h"
-#include <vector>
-#include "ParticleEmitter.h"
 #include "CubeObject.h"
 
 glm::vec3 cubePosition;
