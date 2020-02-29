@@ -158,6 +158,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BoundaryBox.cpp" />
+    <ClCompile Include="CubeObject.cpp" />
     <ClCompile Include="ExplosionEmitter.cpp" />
     <ClCompile Include="ExplosionParticle.cpp" />
     <ClCompile Include="GPGame_Template_VS2019_x64.cpp" />
@@ -168,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundaryBox.h" />
+    <ClInclude Include="CubeObject.h" />
     <ClInclude Include="ExplosionEmitter.h" />
     <ClInclude Include="ExplosionParticle.h" />
     <ClInclude Include="graphics.h" />
