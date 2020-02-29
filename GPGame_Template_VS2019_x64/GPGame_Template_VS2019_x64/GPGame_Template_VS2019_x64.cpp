@@ -1,23 +1,10 @@
-// Simplified Renderer application for GP course
-// Features:
-// Reduced OpenGL version from 4.5 to 3.3 to allow it to render in older laptops.
-// Added Shapes library for rendering cubes, spheres and vectors.
-// Added examples of matrix multiplication on Update.
-// Added resize screen and keyboard callbacks.
-// Added FPS camera functionality
-// Update 2019/01 updated libraries and created project for VS2017 including directory dependant links to libraries.
-// Update 2020/01 updated libraries for x64 and for VS2020, also adding MAC compiled Libraries.
 
-// Suggestions or extra help please do email me at S.Padilla@hw.ac.uk
-
-// Standard C++ libraries
 #include <iostream>
 #include <vector>
+
 using namespace std;
 
-// Helper graphic libraries
 #include <GL/glew.h>
-
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -25,6 +12,11 @@ using namespace std;
 #include "graphics.h"
 #include "shapes.h"
 #include <vector>
+#include "glm/ext.hpp"
+
+// Personal classes
+#include "Player.h"
+#include "Arena.h"
 
 // MAIN FUNCTIONS
 void startup();
@@ -49,127 +41,12 @@ bool		mouseEnabled = true; // keep track of mouse toggle.
 // MAIN GRAPHICS OBJECT
 Graphics    myGraphics;        // Runing all the graphics in this object
 
-//Classes
-class Particle {
-public:
-	int timetolive;
-	float x;
-	float y;
-	float z;
-	bool isalive;
-	Line visualParticle;
-
-	Particle(int input_timetolive, float input_x, float input_y, float input_z, bool input_isalive) {
-		timetolive = input_timetolive;
-		x = input_x;
-		y = input_y;
-		z = input_z;
-		isalive = input_isalive;
-	}
-	Particle() : timetolive(200), x(0.0f), y(0.0f), z(0.0f), isalive(true) {}
-
-	void init() {
-		Line* visualParticle_p = new Line;
-		visualParticle = *visualParticle_p;
-		visualParticle.Load();
-		visualParticle.fillColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		visualParticle.lineColor = glm::vec4(0.2f, 1.0f, 0.8f, 1.0f);
-		visualParticle.lineWidth = 5.0f;
-	}
-
-	glm::mat4 update() {
-		if (timetolive > 0.0f) {
-			int x_rand = rand() % 10;
-			float x_deviation = 0.0f;
-			switch (x_rand) {
-			case 0:
-				x_deviation = 0.03f;
-				break;
-			case 1:
-				x_deviation = -0.03f;
-				break;
-			default:
-				break;
-			}
-			int z_rand = rand() % 10;
-			float z_deviation = 0.0f;
-			switch (z_rand) {
-			case 0:
-				z_deviation = 0.03f;
-				break;
-			case 1:
-				z_deviation = -0.03f;
-				break;
-			default:
-				break;
-			}
-
-			x += x_deviation;
-			y += 0.01f;
-			z += z_deviation;
-			timetolive--;
-			glm::mat4 mv_particle =
-				glm::translate(glm::vec3(x, y, z)) *
-				glm::scale(glm::vec3(200.0f, 200.0f, 0.03f)) *
-				glm::mat4(1.0f);
-			return mv_particle;
-		}
-	}
-
-	void destroy() {//unused for now
-		delete this;
-	}
-};
-
-class ParticleEmitter {
-public:
-	float x;
-	float y;
-	float z;
-	int reloadtime;
-	//Particle emittedparticle;
-	Particle particlesList[6];
-
-	ParticleEmitter(float input_x, float input_y, float input_z, int input_reloadtime) {
-		x = input_x;
-		y = input_y;
-		z = input_z;
-		reloadtime = input_reloadtime;
-	}
-	ParticleEmitter() : x(-1.0f), y(0.0f), z(-1.0f), reloadtime(40) {};
-
-	void initparticle() {
-
-		Particle newParticle = Particle(150 + rand() % 150, -1.0f, 0.0f, -1.0f, true);
-		newParticle.init();
-		particlesList[0] = newParticle;
-	}
-	void update() {
-		//if (!particlesList[0].isalive) {
-			if (reloadtime <= 0) {
-				initparticle();
-				reloadtime = rand() % 50;
-			}
-			else {
-				reloadtime--;
-			}
-		//}
-	}
-};
-
-// DEMO OBJECTS
-Cube        myCube;
-Sphere      mySphere;
-Arrow       arrowX;
-Arrow       arrowY;
-Arrow       arrowZ;
-Cube        myFloor;
-Line        myLine;
-Cylinder    myCylinder;
-
-//Line		particle;
-//Particle	simpleparticle;
-ParticleEmitter emitter = ParticleEmitter();
+// Objects
+Cube    myFloor;
+Player	player;
+Arena	arena;
+int		step = 0, flashing_time = 0, shot_direction_picker = 0, th_cube = 0;
+char	walls[4] = { 'N','S','E','O' };
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -180,9 +57,7 @@ int main()
 	int errorGraphics = myGraphics.Init();			// Launch window and graphics context
 	if (errorGraphics) return 0;					// Close if something went wrong...
 
-	startup();										// Setup all necessary information for startup (aka. load texture, shaders, models, etc).
-
-
+	startup();										// Setup all necessary information for startup (aka. load texture, shaders, models, etc).s
 
 	// MAIN LOOP run until the window is closed
 	while (!quit) {
@@ -228,31 +103,12 @@ void startup() {
 	myGraphics.aspect = (float)myGraphics.windowWidth / (float)myGraphics.windowHeight;
 	myGraphics.proj_matrix = glm::perspective(glm::radians(50.0f), myGraphics.aspect, 0.1f, 1000.0f);
 
-	// Load Geometry examples
-	myCube.Load();
-
-	mySphere.Load();
-	mySphere.fillColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);    // You can change the shape fill colour, line colour or linewidth
-
-	arrowX.Load(); arrowY.Load(); arrowZ.Load();
-	arrowX.fillColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f); arrowX.lineColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	arrowY.fillColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f); arrowY.lineColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-	arrowZ.fillColor = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f); arrowZ.lineColor = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+	player.init();
+	arena.init();
 
 	myFloor.Load();
 	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
 	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
-
-	myCylinder.Load();
-	myCylinder.fillColor = glm::vec4(0.7f, 0.7f, 0.7f, 1.0f);
-	myCylinder.lineColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-
-	myLine.Load();
-	myLine.fillColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	myLine.lineColor = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
-	myLine.lineWidth = 5.0f;
-
-	emitter.initparticle();
 
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
@@ -287,7 +143,7 @@ void updateCamera() {
 	myGraphics.cameraFront = glm::normalize(front);
 
 	// Update movement using the keys
-	GLfloat cameraSpeed = 1.0f * deltaTime;
+	GLfloat cameraSpeed = 3.0f * deltaTime;
 	if (keyStatus[GLFW_KEY_W]) myGraphics.cameraPosition += cameraSpeed * myGraphics.cameraFront;
 	if (keyStatus[GLFW_KEY_S]) myGraphics.cameraPosition -= cameraSpeed * myGraphics.cameraFront;
 	if (keyStatus[GLFW_KEY_A]) myGraphics.cameraPosition -= glm::normalize(glm::cross(myGraphics.cameraFront, myGraphics.cameraUp)) * cameraSpeed;
@@ -312,47 +168,18 @@ void updateSceneElements() {
 	lastTime = currentTime;                            // Save for next frame calculations.
 
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
-
-	// Calculate Cube position
-	glm::mat4 mv_matrix_cube =
-		glm::translate(glm::vec3(2.0f, 0.5f, 0.0f)) *
+	
+	// Player's movements
+	if (keyStatus[GLFW_KEY_UP]) player.position.z += 0.007f;
+	if (keyStatus[GLFW_KEY_LEFT]) player.position.x += 0.007f;
+	if (keyStatus[GLFW_KEY_DOWN]) player.position.z -= 0.007f;
+	if (keyStatus[GLFW_KEY_RIGHT]) player.position.x -= 0.007f;
+	
+	glm::mat4 pos_player =
+		glm::translate(glm::vec3(player.position.x, player.position.y, player.position.z)) *
 		glm::mat4(1.0f);
-	myCube.mv_matrix = myGraphics.viewMatrix * mv_matrix_cube;
-	myCube.proj_matrix = myGraphics.proj_matrix;
-
-	// calculate Sphere movement
-	glm::mat4 mv_matrix_sphere =
-		glm::translate(glm::vec3(-2.0f, 0.5f, 0.0f)) *
-		glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
-		glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
-		glm::mat4(1.0f);
-	mySphere.mv_matrix = myGraphics.viewMatrix * mv_matrix_sphere;
-	mySphere.proj_matrix = myGraphics.proj_matrix;
-
-	//Calculate Arrows translations (note: arrow model points up)
-	glm::mat4 mv_matrix_x =
-		glm::translate(glm::vec3(0.0f, 0.0f, 0.0f)) *
-		glm::rotate(glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *
-		glm::scale(glm::vec3(0.2f, 0.5f, 0.2f)) *
-		glm::mat4(1.0f);
-	arrowX.mv_matrix = myGraphics.viewMatrix * mv_matrix_x;
-	arrowX.proj_matrix = myGraphics.proj_matrix;
-
-	glm::mat4 mv_matrix_y =
-		glm::translate(glm::vec3(0.0f, 0.0f, 0.0f)) *
-		//glm::rotate(glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *    // already model pointing up
-		glm::scale(glm::vec3(0.2f, 0.5f, 0.2f)) *
-		glm::mat4(1.0f);
-	arrowY.mv_matrix = myGraphics.viewMatrix * mv_matrix_y;
-	arrowY.proj_matrix = myGraphics.proj_matrix;
-
-	glm::mat4 mv_matrix_z =
-		glm::translate(glm::vec3(0.0f, 0.0f, 0.0f)) *
-		glm::rotate(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) *
-		glm::scale(glm::vec3(0.2f, 0.5f, 0.2f)) *
-		glm::mat4(1.0f);
-	arrowZ.mv_matrix = myGraphics.viewMatrix * mv_matrix_z;
-	arrowZ.proj_matrix = myGraphics.proj_matrix;
+	player.character.mv_matrix = myGraphics.viewMatrix * pos_player;
+	player.character.proj_matrix = myGraphics.proj_matrix;
 
 	// Calculate floor position and resize
 	myFloor.mv_matrix = myGraphics.viewMatrix *
@@ -361,30 +188,52 @@ void updateSceneElements() {
 		glm::mat4(1.0f);
 	myFloor.proj_matrix = myGraphics.proj_matrix;
 
-	// Calculate cylinder
-	myCylinder.mv_matrix = myGraphics.viewMatrix *
-		glm::translate(glm::vec3(-1.0f, 0.5f, 2.0f)) *
+	glm::mat4 mv_matrix_arena =
+		glm::translate(glm::vec3(0.0f, 0.003f, 0.0f)) *
+		glm::scale(glm::vec3(17.0f, 0.001f, 17.0f)) *
 		glm::mat4(1.0f);
-	myCylinder.proj_matrix = myGraphics.proj_matrix;
+	arena.arena.mv_matrix = myGraphics.viewMatrix * mv_matrix_arena;
+	arena.arena.proj_matrix = myGraphics.proj_matrix;
 
-	// Calculate Line
-	myLine.mv_matrix = myGraphics.viewMatrix *
-		glm::translate(glm::vec3(1.0f, 0.5f, 2.0f)) *
-		glm::mat4(1.0f);
-	myLine.proj_matrix = myGraphics.proj_matrix;
+	glm::mat4 mv_matrix_wall_N, mv_matrix_wall_S, mv_matrix_wall_E, mv_matrix_wall_O;
+	float original_x = 9.0f;
+	float original_z = 8.0f;
 
-	if (emitter.particlesList[0].isalive) {
-		glm::mat4 mv_particle = emitter.particlesList[0].update();
-		emitter.particlesList[0].visualParticle.mv_matrix = myGraphics.viewMatrix * mv_particle;
-		emitter.particlesList[0].visualParticle.proj_matrix = myGraphics.proj_matrix;
+	for (int i = 0; i < size(arena. wall_N); i++) {
+		mv_matrix_wall_N =
+			glm::translate(glm::vec3(original_x, 0.5f, 9.0f)) *
+			glm::mat4(1.0f);
+		arena.wall_N[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_N;
+		arena.wall_N[i].proj_matrix = myGraphics.proj_matrix;
+		
+		mv_matrix_wall_S =
+			glm::translate(glm::vec3(original_x, 0.5f, -9.0f)) *
+			glm::mat4(1.0f);
+		arena.wall_S[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_S;
+		arena.wall_S[i].proj_matrix = myGraphics.proj_matrix;
+
+		original_x--;
 	}
-	emitter.update();
 
-	t += 0.01f; // increment movement variable
+	for (int i = 0; i < size(arena.wall_E); i++) {
+		mv_matrix_wall_E =
+			glm::translate(glm::vec3(-9.0f, 0.5f, original_z)) *
+			glm::mat4(1.0f);
+		arena.wall_E[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_E;
+		arena.wall_E[i].proj_matrix = myGraphics.proj_matrix;
 
+		mv_matrix_wall_O =
+			glm::translate(glm::vec3(9.0f, 0.5f, -original_z)) *
+			glm::mat4(1.0f);
+		arena.wall_O[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_O;
+		arena.wall_O[i].proj_matrix = myGraphics.proj_matrix;
+
+		original_z--;
+	}
+
+	t += 0.01f; // increment movement variables
 
 	if (glfwWindowShouldClose(myGraphics.window) == GL_TRUE) quit = true; // If quit by pressing x on window.
-
 }
 
 void renderScene() {
@@ -393,21 +242,72 @@ void renderScene() {
 
 	// Draw objects in screen
 	myFloor.Draw();
-	myCube.Draw();
-	mySphere.Draw();
+	player.render_character();
+	arena.render_arena();
 
-	arrowX.Draw();
-	arrowY.Draw();
-	arrowZ.Draw();
+	// FLASHING A CUBE
 
-	myLine.Draw();
-	myCylinder.Draw();
+	step++;
+	flashing_time++;
 
-	if (emitter.particlesList[0].timetolive <= 0.0f) {
-		emitter.particlesList[0].isalive = false;
+	/*if (flashing_time < 1000) {
+		cout << flashing_time << "th step" << endl;
+		flashing_time++;
 	}
-	if (emitter.particlesList[0].isalive) {
-		emitter.particlesList[0].visualParticle.Draw();
+	else if (flashing_time == 1000) {
+		cout << "FINISHED" << endl;
+		flashing_time++;
+	}
+
+	if (step == 200) player.character.fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+	else if (step == 400) {
+		player.character.fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+		step = 0;
+	}*/
+
+
+
+	// CHOOSING THE CUBE TO FLASH WITHIN A CHOOSEN AREA
+
+	if (arena.shot_direction == 'v') { // Manage with time
+		srand(time(NULL));
+		arena.shot_direction = walls[rand() % 4];
+
+		if (arena.shot_direction == 'S' || arena.shot_direction == 'N') th_cube = rand() % 19;
+		else th_cube = rand() % 17;
+	}
+
+	switch (arena.shot_direction) {
+	case 'S':
+		if (step == 200) arena.wall_S[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+		else if (step == 400) {
+			arena.wall_S[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+			step = 0;
+		}
+		break;
+	case 'N':
+		if (step == 200) arena.wall_N[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+		else if (step == 400) {
+			arena.wall_N[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+			step = 0;
+		}
+		break;
+	case 'E':
+		if (step == 200) arena.wall_E[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+		else if (step == 400) {
+			arena.wall_E[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+			step = 0;
+		}
+		break;
+	case 'O':
+		if (step == 200) arena.wall_O[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
+		else if (step == 400) {
+			arena.wall_O[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
+			step = 0;
+		}
+		break;
+	default:
+		cout << "A problem has been occured" << endl;
 	}
 }
 

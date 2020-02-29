@@ -110,6 +110,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)..\Libraries_x64\glfw-3.3.bin.WIN64\include;$(SolutionDir)..\Libraries_x64\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,11 +158,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Arena.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="GPGame_Template_VS2019_x64.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="shapes.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Arena.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="shapes.h" />
   </ItemGroup>
