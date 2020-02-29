@@ -19,10 +19,10 @@ using namespace std;
 #include "Arena.h"
 
 // MAIN FUNCTIONS
-void startup(Player& player);
+void startup();
 void updateCamera();
-void updateSceneElements(Player& player);
-void renderScene(Player& player);
+void updateSceneElements();
+void renderScene();
 
 // CALLBACK FUNCTIONS
 void onResizeCallback(GLFWwindow* window, int w, int h);
@@ -57,7 +57,7 @@ int main()
 	int errorGraphics = myGraphics.Init();			// Launch window and graphics context
 	if (errorGraphics) return 0;					// Close if something went wrong...
 
-	startup(player);										// Setup all necessary information for startup (aka. load texture, shaders, models, etc).s
+	startup();										// Setup all necessary information for startup (aka. load texture, shaders, models, etc).s
 
 	// MAIN LOOP run until the window is closed
 	while (!quit) {
@@ -66,10 +66,10 @@ int main()
 		updateCamera();
 
 		// Update position, orientations and any other relevant visual state of any dynamic elements in the scene.
-		updateSceneElements(player);
+		updateSceneElements();
 
 		// Render a still frame into an off-screen frame buffer known as the backbuffer.
-		renderScene(player);
+		renderScene();
 
 		// Swap the back buffer with the front buffer, making the most recently rendered image visible on-screen.
 		glfwSwapBuffers(myGraphics.window);        // swap buffers (avoid flickering and tearing)
@@ -85,7 +85,7 @@ int main()
 	return 0;
 }
 
-void startup(Player& player) {
+void startup() {
 	// Keep track of the running time
 	GLfloat currentTime = (GLfloat)glfwGetTime();    // retrieve timelapse
 	deltaTime = currentTime;                        // start delta time
@@ -158,7 +158,7 @@ void updateCamera() {
 	}
 }
 
-void updateSceneElements(Player& player) {
+void updateSceneElements() {
 
 	glfwPollEvents();                                // poll callbacks
 
@@ -236,7 +236,7 @@ void updateSceneElements(Player& player) {
 	if (glfwWindowShouldClose(myGraphics.window) == GL_TRUE) quit = true; // If quit by pressing x on window.
 }
 
-void renderScene(Player& player) {
+void renderScene() {
 	// Clear viewport - start a new frame.
 	myGraphics.ClearViewport();
 
@@ -267,7 +267,7 @@ void renderScene(Player& player) {
 
 
 
-	// CHOOSING THE CUBE TO FLASH WITHIN A PICKED AREA
+	// CHOOSING THE CUBE TO FLASH WITHIN A CHOOSEN AREA
 
 	if (arena.shot_direction == 'v') { // Manage with time
 		srand(time(NULL));
@@ -275,8 +275,6 @@ void renderScene(Player& player) {
 
 		if (arena.shot_direction == 'S' || arena.shot_direction == 'N') th_cube = rand() % 19;
 		else th_cube = rand() % 17;
-
-		cout << arena.shot_direction << " " << th_cube << endl;
 	}
 
 	switch (arena.shot_direction) {
