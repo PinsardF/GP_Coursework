@@ -160,14 +160,26 @@
   <ItemGroup>
     <ClCompile Include="Arena.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="BoundaryBox.cpp" />
+    <ClCompile Include="CubeObject.cpp" />
+    <ClCompile Include="ExplosionEmitter.cpp" />
+    <ClCompile Include="ExplosionParticle.cpp" />
     <ClCompile Include="GPGame_Template_VS2019_x64.cpp" />
     <ClCompile Include="graphics.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="shapes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arena.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="BoundaryBox.h" />
+    <ClInclude Include="CubeObject.h" />
+    <ClInclude Include="ExplosionEmitter.h" />
+    <ClInclude Include="ExplosionParticle.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="shapes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

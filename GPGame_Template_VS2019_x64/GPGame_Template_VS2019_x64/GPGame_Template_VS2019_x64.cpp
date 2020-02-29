@@ -17,6 +17,9 @@ using namespace std;
 // Personal classes
 #include "Player.h"
 #include "Arena.h"
+#include "ParticleEmitter.h"
+#include "BoundaryBox.h"
+#include "ExplosionEmitter.h"
 
 // MAIN FUNCTIONS
 void startup();
@@ -47,6 +50,11 @@ Player	player;
 Arena	arena;
 int		step = 0, flashing_time = 0, shot_direction_picker = 0, th_cube = 0;
 char	walls[4] = { 'N','S','E','O' };
+
+ParticleEmitter emitter = ParticleEmitter();
+ExplosionEmitter boom = ExplosionEmitter(glm::vec3(2.0f,0.5f,2.0f),10);
+BoundaryBox cubeBox = BoundaryBox(glm::vec3(2.0f, 0.5f, 0.0f), glm::vec3(2.5f, 1.0f, 0.5f), glm::vec3(1.5f, 0.0f, -0.5f));//COLLISIONS
+BoundaryBox sphereBox = BoundaryBox(glm::vec3(-2.0f, 0.5f, 0.0f), glm::vec3(-1.5f, 1.0f, 0.5f), glm::vec3(-2.5f, 0.0f, -0.5f));//COLLISIONS
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -109,6 +117,9 @@ void startup() {
 	myFloor.Load();
 	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
 	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
+
+	emitter.initparticle();
+	boom.initExplosion();
 
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
@@ -177,9 +188,37 @@ void updateSceneElements() {
 	
 	glm::mat4 pos_player =
 		glm::translate(glm::vec3(player.position.x, player.position.y, player.position.z)) *
-		glm::mat4(1.0f);
+    glm::mat4(1.0f);
 	player.character.mv_matrix = myGraphics.viewMatrix * pos_player;
 	player.character.proj_matrix = myGraphics.proj_matrix;
+
+	// Calculate Cube position
+	if (cubeBox.detect_collision(sphereBox)) {//COLLISIONS {
+		test_collision = -0.03f;
+	}//COLLISIONS
+	if (cube_x > 3.0f) {
+		test_collision = 0.0f;
+	}
+
+	cube_x -= test_collision;
+	glm::mat4 mv_matrix_cube =
+		glm::translate(glm::vec3(cube_x, 0.5f, 0.0f)) *
+		glm::mat4(1.0f);
+	myCube.mv_matrix = myGraphics.viewMatrix * mv_matrix_cube;
+	myCube.proj_matrix = myGraphics.proj_matrix;
+
+	cubeBox.center.x -= test_collision;//COLLISIONS
+	cubeBox.max_position.x -= test_collision;//COLLISIONS
+	cubeBox.min_position.x -= test_collision;//COLLISIONS
+
+	// calculate Sphere movement
+	glm::mat4 mv_matrix_sphere =
+		glm::translate(glm::vec3(-2.0f, 0.5f, 0.0f)) *
+		glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
+		glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
+		glm::mat4(1.0f);
+	mySphere.mv_matrix = myGraphics.viewMatrix * mv_matrix_sphere;
+	mySphere.proj_matrix = myGraphics.proj_matrix;
 
 	// Calculate floor position and resize
 	myFloor.mv_matrix = myGraphics.viewMatrix *
@@ -221,6 +260,8 @@ void updateSceneElements() {
 			glm::mat4(1.0f);
 		arena.wall_E[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_E;
 		arena.wall_E[i].proj_matrix = myGraphics.proj_matrix;
+    original_z--;
+	}
 
 		mv_matrix_wall_O =
 			glm::translate(glm::vec3(9.0f, 0.5f, -original_z)) *
@@ -228,8 +269,8 @@ void updateSceneElements() {
 		arena.wall_O[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_O;
 		arena.wall_O[i].proj_matrix = myGraphics.proj_matrix;
 
-		original_z--;
-	}
+	emitter.update(myGraphics);
+	boom.update(myGraphics);
 
 	t += 0.01f; // increment movement variables
 
@@ -308,8 +349,21 @@ void renderScene() {
 		break;
 	default:
 		cout << "A problem has been occured" << endl;
+    }
+
+	for (int i = 0; i < emitter.particlesList.size(); i++) {
+		if (emitter.particlesList[i].isalive) {
+			emitter.particlesList[i].visualParticle.Draw();
+		}
 	}
+
+	for (int i = 0; i < boom.explosionParticlesList.size(); i++) {
+		if (boom.explosionParticlesList[i].explosionIsalive) {
+			boom.explosionParticlesList[i].explosionVisualParticle.Draw();
+		}
+  }
 }
+
 
 
 // CallBack functions low level functionality.
