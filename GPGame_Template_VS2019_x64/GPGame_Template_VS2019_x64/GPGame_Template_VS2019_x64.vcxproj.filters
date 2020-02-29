@@ -13,6 +13,7 @@
     <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="shapes.cpp" />
     <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="PlayerBoundaryBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arena.h" />
@@ -26,5 +27,6 @@
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="shapes.h" />
     <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="PlayerBoundaryBox.h" />
   </ItemGroup>
 </Project>

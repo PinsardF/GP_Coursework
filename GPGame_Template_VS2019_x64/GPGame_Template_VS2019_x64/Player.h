@@ -1,17 +1,33 @@
-#include <iostream>
+//#include <iostream>
+#include "Obstacle.h"
+#include "PlayerBoundaryBox.h"
+//#include <vector>
+//using namespace std;
+//#include <string>
+#include <GL/glew.h>
+//#include <GLFW/glfw3.h>
+//#include <glm/glm.hpp>
+//#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp>
+#include "graphics.h"
+#include "shapes.h"
+//#include <vector>
 using namespace std;
 #pragma once
 
 class Player
 {
 public:
-	glm::vec3	position;
 	Cube		character;
-	Graphics    graphics;
-	glm::mat4	pos_player;
+	PlayerBoundaryBox hitbox;
+	glm::vec3	pos_player;
+	glm::vec3	cel_player;
+	std::vector<char> pushed;
 
 	Player();
 	//~Player();
 	void init();
-	void render_character();
+	void update_player();
+	void render_character(Graphics graphics);
+	void detect_collision(Obstacle obstacle);
 };

@@ -1,4 +1,3 @@
-
 #include "BoundaryBox.h"
 
 glm::vec3 center;
@@ -13,7 +12,7 @@ BoundaryBox::BoundaryBox(glm::vec3 input_center, glm::vec3 input_max, glm::vec3 
 BoundaryBox::BoundaryBox() : center(glm::vec3(0.0f, 0.0f, 0.0f)), max_position(glm::vec3(1.0f, 1.0f, 1.0f)),
 min_position(glm::vec3(-1.0f, -1.0f, -1.0f)) {}
 
-bool BoundaryBox::detect_collision(BoundaryBox other_object) {
+/*bool BoundaryBox::detect_collision(BoundaryBox other_object) {
 	if (max_position.x >= other_object.min_position.x && min_position.x <= other_object.max_position.x &&
 		max_position.y >= other_object.min_position.y && min_position.y <= other_object.max_position.y &&
 		max_position.z >= other_object.min_position.z && min_position.z <= other_object.max_position.z) {
@@ -23,9 +22,9 @@ bool BoundaryBox::detect_collision(BoundaryBox other_object) {
 	//	return true;
 	//}
 	return false;
-}
+}*/
 
-glm::vec3 BoundaryBox::center_of_collision(BoundaryBox other_object) {
+/*glm::vec3 BoundaryBox::center_of_collision(BoundaryBox other_object) {
 	glm::vec3 collisionCenter = glm::vec3(0.0f, 0.0f, 0.0f);
 	if (abs(max_position.x - other_object.min_position.x) <= abs(min_position.x - other_object.max_position.x)) {
 		collisionCenter.x = (max_position.x + other_object.min_position.x) / 2;
@@ -46,4 +45,4 @@ glm::vec3 BoundaryBox::center_of_collision(BoundaryBox other_object) {
 		collisionCenter.z = (min_position.z + other_object.max_position.z) / 2;
 	}
 	return collisionCenter;
-}
+}*/

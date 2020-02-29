@@ -17,10 +17,7 @@ using namespace std;
 // Personal classes
 #include "Player.h"
 #include "Arena.h"
-#include "ParticleEmitter.h"
-#include "BoundaryBox.h"
-#include "CubeObject.h"
-#include "ExplosionEmitter.h"
+#include "Obstacle.h"
 
 // MAIN FUNCTIONS
 void startup();
@@ -49,6 +46,7 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 Cube    myFloor;
 Player	player;
 Arena	arena;
+std::vector<Obstacle> obstaclesList;
 //int		flashing_time = 0, shot_direction_picker = 0;
 
 // Some global variable to do the animation.
@@ -113,9 +111,14 @@ void startup() {
 	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
 	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
 
+	obstaclesList.push_back(Obstacle(glm::vec3(9.0f, 0.5f, 0.0f), glm::vec3(-9.0f, 0.5f, 0.0f), 'E', glm::vec3(0.9f, 0.9f, 2.0f)));
+	obstaclesList.push_back(Obstacle(glm::vec3(4.8f, 0.5f, 9.0f), glm::vec3(4.8f, 0.5f, -9.0f), 'S', glm::vec3(4.0f, 0.9f, 0.9f)));
+	for (int i = 0; i < obstaclesList.size(); i++) {
+		obstaclesList[i].init();
+	}
+
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
-
 }
 
 void updateCamera() {
@@ -173,16 +176,10 @@ void updateSceneElements() {
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 	
 	// Player's movements
-	if (keyStatus[GLFW_KEY_UP]) player.position.z += 0.1f;//CHANGE TO 0.07f
-	if (keyStatus[GLFW_KEY_LEFT]) player.position.x += 0.1f;//CHANGE
-	if (keyStatus[GLFW_KEY_DOWN]) player.position.z -= 0.1f;//CHANGE
-	if (keyStatus[GLFW_KEY_RIGHT]) player.position.x -= 0.1f;//CHANGE
-	
-	glm::mat4 pos_player =
-		glm::translate(glm::vec3(player.position.x, player.position.y, player.position.z)) *
-    glm::mat4(1.0f);
-	player.character.mv_matrix = myGraphics.viewMatrix * pos_player;
-	player.character.proj_matrix = myGraphics.proj_matrix;
+	if (keyStatus[GLFW_KEY_UP]) player.cel_player.z += 0.1f;//CHANGE TO 0.07f
+	if (keyStatus[GLFW_KEY_LEFT]) player.cel_player.x += 0.1f;//CHANGE
+	if (keyStatus[GLFW_KEY_DOWN]) player.cel_player.z -= 0.1f;//CHANGE
+	if (keyStatus[GLFW_KEY_RIGHT]) player.cel_player.x -= 0.1f;//CHANGE
 
 	// Calculate floor position and resize
 	myFloor.mv_matrix = myGraphics.viewMatrix *
@@ -234,6 +231,14 @@ void updateSceneElements() {
 		original_z--;
 	}
 
+	for (int i = 0; i < obstaclesList.size(); i++) {
+		obstaclesList[i].update_obstacle();
+	}
+	for (int i = 0; i < obstaclesList.size(); i++) {
+		player.detect_collision(obstaclesList[i]);
+	}
+	player.update_player();
+
 	t += 0.01f; // increment movement variables
 
 	if (glfwWindowShouldClose(myGraphics.window) == GL_TRUE) quit = true; // If quit by pressing x on window.
@@ -245,9 +250,13 @@ void renderScene() {
 
 	// Draw objects in screen
 	myFloor.Draw();
-	player.render_character();
+	player.render_character(myGraphics);
 	arena.render_arena();
 	arena.update_arena();
+
+	for (int i = 0; i < obstaclesList.size(); i++) {
+		obstaclesList[i].render_obstacle(myGraphics);
+	}
 
 	// FLASHING A CUBE
 

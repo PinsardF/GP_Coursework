@@ -24,7 +24,7 @@ void CubeObject::init() {
 }
 
 void CubeObject::collide(BoundaryBox object) {
-	if (cubeBox.detect_collision(object)) {
+	/*if (cubeBox.detect_collision(object)) {
 		glm::vec3 center = cubeBox.center_of_collision(object);
 		float x = center.x - cubePosition.x;
 		float y = center.y - cubePosition.y;
@@ -35,7 +35,7 @@ void CubeObject::collide(BoundaryBox object) {
 		z /= length;
 		glm::vec3 force = glm::vec3(x, y, z);
 		react(force);
-	}
+	}*/
 }
 
 void CubeObject::react(glm::vec3 force) {

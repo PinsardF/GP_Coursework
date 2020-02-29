@@ -2,7 +2,7 @@
 
 glm::vec3 explosionEmitterPosition;
 int explosionReloadtime;
-std::vector<ExplosionParticle> ExplosionParticlesList;
+std::vector<ExplosionParticle> explosionParticlesList;
 
 ExplosionEmitter::ExplosionEmitter(glm::vec3 input_vector, int input_reloadtime) {
 	explosionEmitterPosition.x = input_vector.x;
