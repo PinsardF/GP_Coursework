@@ -1,3 +1,0 @@
-﻿  GPGame_Template_VS2019_x64.cpp
-C:\Users\baton\Documents\EDIMBOURG\COURS\ComputerGames\Projects\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64.cpp(273,13): warning C4244: 'argument' : conversion de 'time_t' en 'unsigned int', perte possible de données
-  GPGame_Template_VS2019_x64.vcxproj -> C:\Users\baton\Documents\EDIMBOURG\COURS\ComputerGames\Projects\GP_Coursework\GPGame_Template_VS2019_x64\x64\Debug\GPGame_Template_VS2019_x64.exe
