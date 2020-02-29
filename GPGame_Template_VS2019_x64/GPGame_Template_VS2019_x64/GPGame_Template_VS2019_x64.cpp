@@ -19,6 +19,7 @@ using namespace std;
 #include "Arena.h"
 #include "ParticleEmitter.h"
 #include "BoundaryBox.h"
+#include "CubeObject.h"
 #include "ExplosionEmitter.h"
 
 // MAIN FUNCTIONS
@@ -48,13 +49,7 @@ Graphics    myGraphics;        // Runing all the graphics in this object
 Cube    myFloor;
 Player	player;
 Arena	arena;
-int		step = 0, flashing_time = 0, shot_direction_picker = 0, th_cube = 0;
-char	walls[4] = { 'N','S','E','O' };
-
-ParticleEmitter emitter = ParticleEmitter();
-ExplosionEmitter boom = ExplosionEmitter(glm::vec3(2.0f,0.5f,2.0f),10);
-BoundaryBox cubeBox = BoundaryBox(glm::vec3(2.0f, 0.5f, 0.0f), glm::vec3(2.5f, 1.0f, 0.5f), glm::vec3(1.5f, 0.0f, -0.5f));//COLLISIONS
-BoundaryBox sphereBox = BoundaryBox(glm::vec3(-2.0f, 0.5f, 0.0f), glm::vec3(-1.5f, 1.0f, 0.5f), glm::vec3(-2.5f, 0.0f, -0.5f));//COLLISIONS
+//int		flashing_time = 0, shot_direction_picker = 0;
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -118,9 +113,6 @@ void startup() {
 	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
 	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
 
-	emitter.initparticle();
-	boom.initExplosion();
-
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
 
@@ -181,44 +173,16 @@ void updateSceneElements() {
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 	
 	// Player's movements
-	if (keyStatus[GLFW_KEY_UP]) player.position.z += 0.007f;
-	if (keyStatus[GLFW_KEY_LEFT]) player.position.x += 0.007f;
-	if (keyStatus[GLFW_KEY_DOWN]) player.position.z -= 0.007f;
-	if (keyStatus[GLFW_KEY_RIGHT]) player.position.x -= 0.007f;
+	if (keyStatus[GLFW_KEY_UP]) player.position.z += 0.1f;//CHANGE TO 0.07f
+	if (keyStatus[GLFW_KEY_LEFT]) player.position.x += 0.1f;//CHANGE
+	if (keyStatus[GLFW_KEY_DOWN]) player.position.z -= 0.1f;//CHANGE
+	if (keyStatus[GLFW_KEY_RIGHT]) player.position.x -= 0.1f;//CHANGE
 	
 	glm::mat4 pos_player =
 		glm::translate(glm::vec3(player.position.x, player.position.y, player.position.z)) *
     glm::mat4(1.0f);
 	player.character.mv_matrix = myGraphics.viewMatrix * pos_player;
 	player.character.proj_matrix = myGraphics.proj_matrix;
-
-	// Calculate Cube position
-	if (cubeBox.detect_collision(sphereBox)) {//COLLISIONS {
-		test_collision = -0.03f;
-	}//COLLISIONS
-	if (cube_x > 3.0f) {
-		test_collision = 0.0f;
-	}
-
-	cube_x -= test_collision;
-	glm::mat4 mv_matrix_cube =
-		glm::translate(glm::vec3(cube_x, 0.5f, 0.0f)) *
-		glm::mat4(1.0f);
-	myCube.mv_matrix = myGraphics.viewMatrix * mv_matrix_cube;
-	myCube.proj_matrix = myGraphics.proj_matrix;
-
-	cubeBox.center.x -= test_collision;//COLLISIONS
-	cubeBox.max_position.x -= test_collision;//COLLISIONS
-	cubeBox.min_position.x -= test_collision;//COLLISIONS
-
-	// calculate Sphere movement
-	glm::mat4 mv_matrix_sphere =
-		glm::translate(glm::vec3(-2.0f, 0.5f, 0.0f)) *
-		glm::rotate(-t, glm::vec3(0.0f, 1.0f, 0.0f)) *
-		glm::rotate(-t, glm::vec3(1.0f, 0.0f, 0.0f)) *
-		glm::mat4(1.0f);
-	mySphere.mv_matrix = myGraphics.viewMatrix * mv_matrix_sphere;
-	mySphere.proj_matrix = myGraphics.proj_matrix;
 
 	// Calculate floor position and resize
 	myFloor.mv_matrix = myGraphics.viewMatrix *
@@ -260,8 +224,6 @@ void updateSceneElements() {
 			glm::mat4(1.0f);
 		arena.wall_E[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_E;
 		arena.wall_E[i].proj_matrix = myGraphics.proj_matrix;
-    original_z--;
-	}
 
 		mv_matrix_wall_O =
 			glm::translate(glm::vec3(9.0f, 0.5f, -original_z)) *
@@ -269,8 +231,8 @@ void updateSceneElements() {
 		arena.wall_O[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_O;
 		arena.wall_O[i].proj_matrix = myGraphics.proj_matrix;
 
-	emitter.update(myGraphics);
-	boom.update(myGraphics);
+		original_z--;
+	}
 
 	t += 0.01f; // increment movement variables
 
@@ -285,11 +247,12 @@ void renderScene() {
 	myFloor.Draw();
 	player.render_character();
 	arena.render_arena();
+	arena.update_arena();
 
 	// FLASHING A CUBE
 
-	step++;
-	flashing_time++;
+	//flashing_time++;
+	
 
 	/*if (flashing_time < 1000) {
 		cout << flashing_time << "th step" << endl;
@@ -310,58 +273,6 @@ void renderScene() {
 
 	// CHOOSING THE CUBE TO FLASH WITHIN A CHOOSEN AREA
 
-	if (arena.shot_direction == 'v') { // Manage with time
-		srand(time(NULL));
-		arena.shot_direction = walls[rand() % 4];
-
-		if (arena.shot_direction == 'S' || arena.shot_direction == 'N') th_cube = rand() % 19;
-		else th_cube = rand() % 17;
-	}
-
-	switch (arena.shot_direction) {
-	case 'S':
-		if (step == 200) arena.wall_S[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-		else if (step == 400) {
-			arena.wall_S[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-			step = 0;
-		}
-		break;
-	case 'N':
-		if (step == 200) arena.wall_N[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-		else if (step == 400) {
-			arena.wall_N[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-			step = 0;
-		}
-		break;
-	case 'E':
-		if (step == 200) arena.wall_E[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-		else if (step == 400) {
-			arena.wall_E[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-			step = 0;
-		}
-		break;
-	case 'O':
-		if (step == 200) arena.wall_O[th_cube].fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-		else if (step == 400) {
-			arena.wall_O[th_cube].fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-			step = 0;
-		}
-		break;
-	default:
-		cout << "A problem has been occured" << endl;
-    }
-
-	for (int i = 0; i < emitter.particlesList.size(); i++) {
-		if (emitter.particlesList[i].isalive) {
-			emitter.particlesList[i].visualParticle.Draw();
-		}
-	}
-
-	for (int i = 0; i < boom.explosionParticlesList.size(); i++) {
-		if (boom.explosionParticlesList[i].explosionIsalive) {
-			boom.explosionParticlesList[i].explosionVisualParticle.Draw();
-		}
-  }
 }
 
 

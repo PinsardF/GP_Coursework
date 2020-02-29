@@ -2,7 +2,7 @@
 class Particle{
 public:
 	int timetolive;
-	glm::vec3 position;
+	glm::vec3 p_position;
 	glm::vec3 velocity;
 	//glm::vec3 acceleration;
 	bool isalive;

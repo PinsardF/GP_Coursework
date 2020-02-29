@@ -17,7 +17,7 @@ using namespace std;
 #include "Particle.h"
 
 int timetolive;
-glm::vec3 position;
+glm::vec3 p_position;
 glm::vec3 velocity;
 //glm::vec3 acceleration;
 bool isalive;
@@ -25,16 +25,16 @@ Line visualParticle;
 
 Particle::Particle(int input_timetolive, glm::vec3 input_position, glm::vec3 input_velocity, bool input_isalive) {
 	timetolive = input_timetolive;
-	position.x = input_position.x;
-	position.y = input_position.y;
-	position.z = input_position.z;
+	p_position.x = input_position.x;
+	p_position.y = input_position.y;
+	p_position.z = input_position.z;
 	velocity.x = input_velocity.x;
 	velocity.y = input_velocity.y;
 	velocity.z = input_velocity.z;
 	isalive = input_isalive;
 }
 
-Particle::Particle() : timetolive(200), position(glm::vec3(0.0f, 0.0f, 0.0f)), velocity(glm::vec3(0.0f,0.0f,0.0f)),
+Particle::Particle() : timetolive(200), p_position(glm::vec3(0.0f, 0.0f, 0.0f)), velocity(glm::vec3(0.0f,0.0f,0.0f)),
 isalive(true) {}
 
 void Particle::init() {
@@ -103,12 +103,12 @@ void Particle::update(Graphics graphics) {
 		if (z_sign > 0) z_deviation = -z_deviation;
 		z_deviation /= 200;
 		velocity = glm::vec3(x_deviation, 0.01f, z_deviation);
-		position.x += velocity.x;
-		position.y += velocity.y;
-		position.z += velocity.z;
+		p_position.x += velocity.x;
+		p_position.y += velocity.y;
+		p_position.z += velocity.z;
 		timetolive--;//lifetime decreases
 		glm::mat4 mv_particle =//we calculate the new projection of the particle
-			glm::translate(position) *
+			glm::translate(p_position) *
 			glm::scale(glm::vec3(200.0f, 200.0f, 0.03f)) *
 			glm::mat4(1.0f);
 		visualParticle.mv_matrix = graphics.viewMatrix * mv_particle;
