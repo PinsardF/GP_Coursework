@@ -108,10 +108,30 @@ void startup() {
 	player.init();
 	arena.init();
 
-	/*obstaclesList.push_back(Obstacle(glm::vec3(9.0f, 0.5f, 0.0f), 'E', glm::vec3(0.9f, 0.9f, 2.0f)));
-	obstaclesList.push_back(Obstacle(glm::vec3(4.8f, 0.5f, 9.0f), 'S', glm::vec3(4.0f, 0.9f, 0.9f)));*/
-	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 0.0f), glm::vec3(0.9f, 0.9f, 2.0f),20));
-	eventsList.push_back(Event('O', glm::vec3(4.8f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f),30));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 0.5f), glm::vec3(0.9f, 0.9f, 2.0f),120));
+	eventsList.push_back(Event('O', glm::vec3(5.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f),150));
+	eventsList.push_back(Event('O', glm::vec3(-9.0f, 0.5f, 1.0f), glm::vec3(0.9f, 0.9f, 10.0f), 200));
+	eventsList.push_back(Event('O', glm::vec3(4.5f, 0.5f, -9.0f), glm::vec3(8.0f, 0.9f, 0.9f), 200));
+	eventsList.push_back(Event('O', glm::vec3(-2.5f, 0.5f, -9.0f), glm::vec3(12.0f, 0.9f, 0.9f), 400));
+	eventsList.push_back(Event('O', glm::vec3(2.5f, 0.5f, -9.0f), glm::vec3(12.0f, 0.9f, 0.9f), 450));
+	eventsList.push_back(Event('O', glm::vec3(-2.5f, 0.5f, -9.0f), glm::vec3(12.0f, 0.9f, 0.9f), 500));
+	eventsList.push_back(Event('O', glm::vec3(2.5f, 0.5f, -9.0f), glm::vec3(12.0f, 0.9f, 0.9f), 550));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -1.0f), glm::vec3(0.9f, 0.9f, 15.0f), 800));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -4.0f), glm::vec3(0.9f, 0.9f, 9.0f), 900));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 7.5f), glm::vec3(0.9f, 0.9f, 3.0f), 900));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -5.0f), glm::vec3(0.9f, 0.9f, 7.0f), 1000));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 6.5f), glm::vec3(0.9f, 0.9f, 5.0f), 1000));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -8.0f), glm::vec3(0.9f, 0.9f, 1.0f), 1100));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 3.5f), glm::vec3(0.9f, 0.9f, 11.0f), 1100));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -3.0f), glm::vec3(0.9f, 0.9f, 11.0f), 1200));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 7.0f), glm::vec3(0.9f, 0.9f, 4.0f), 1200));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -8.0f), glm::vec3(0.9f, 0.9f, 1.0f), 1300));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 2.0f), glm::vec3(0.9f, 0.9f, 14.0f), 1300));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -1.5f), glm::vec3(0.9f, 0.9f, 14.0f), 1400));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 7.5f), glm::vec3(0.9f, 0.9f, 1.0f), 1400));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -8.0f), glm::vec3(0.9f, 0.9f, 1.0f), 1500));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 1.5f), glm::vec3(0.9f, 0.9f, 15.0f), 1500));
+	
 
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].init();
@@ -193,85 +213,74 @@ void updateSceneElements() {
 	player.update_player();
 	arena.flashing_cube();
 
-	/*eventsList.shrink_to_fit();
-	obstaclesList.shrink_to_fit();*/
 	int j = 0;
 	float this_minimum = 0.0f;
 	float this_maximum = 0.0f;
 	for (int i = 0; i < eventsList.size(); i++) {
-		if (eventsList[i].timetostart == 60) {
+		if (eventsList[i].timetostart == 120) {
 			switch (eventsList[i].eventDirection) {
 			case 'E':
 				this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
 				this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
-				j = (int)this_minimum + 8;
-				if ((int)eventsList[j].dim_event.z % 2 == 0) {
-					j++;
-				}
+				j = (int) (this_minimum+0.5f);
+				cout << j << endl;
+				cout << this_minimum << ' ' << this_maximum << endl;
 				while (j < this_maximum) {
-					arena.flashingCubesChar.push_back(eventsList[j].eventDirection);
-					arena.flashingCubesTime.push_back(60);
-					arena.flashingCubesInt.push_back(j);
+					arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
+					arena.flashingCubesTime.push_back(120);
+					arena.flashingCubesInt.push_back(8+j);
+					cout << 8 + j << endl;
 					j++;
 				}
 				break;
 			case 'W':
 				this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
 				this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
-				j = (int)this_minimum + 8;
-				if ((int)eventsList[j].dim_event.z % 2 == 0) {
-					j++;
-				}
+				j = (int)(this_minimum + 0.5f);
 				while (j < this_maximum) {
-					arena.flashingCubesChar.push_back(eventsList[j].eventDirection);
-					arena.flashingCubesTime.push_back(60);
-					arena.flashingCubesInt.push_back(j);
+					arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
+					arena.flashingCubesTime.push_back(120);
+					arena.flashingCubesInt.push_back(8+j);
 					j++;
 				}
 				break;
 			case 'S':
 				this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
 				this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
-				j = (int)this_minimum + 8;
-				if ((int)eventsList[j].dim_event.x % 2 == 0) {
-					j++;
-				}
+				j = (int)(this_minimum + 0.5f);
 				while (j < this_maximum) {
-					arena.flashingCubesChar.push_back(eventsList[j].eventDirection);
-					arena.flashingCubesTime.push_back(60);
-					arena.flashingCubesInt.push_back(j);
+					arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
+					arena.flashingCubesTime.push_back(120);
+					arena.flashingCubesInt.push_back(8-j);
 					j++;
 				}
 				break;
 			case 'N':
 				this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
 				this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
-				j = (int)this_minimum + 8;
-				if ((int)eventsList[j].dim_event.x % 2 == 0) {
-					j++;
-				}
+				j = (int)(this_minimum + 0.5f);
 				while (j < this_maximum) {
-					arena.flashingCubesChar.push_back(eventsList[j].eventDirection);
-					arena.flashingCubesTime.push_back(60);
-					arena.flashingCubesInt.push_back(j);
+					arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
+					arena.flashingCubesTime.push_back(120);
+					arena.flashingCubesInt.push_back(8-j);
 					j++;
 				}
 				break;
 			}
 			eventsList[i].timetostart--;
+
 		}
 		else if (eventsList[i].timetostart > 0) {
 			eventsList[i].timetostart--;
 		}
 		else {
-			/*arena.flashingCubesChar.erase(arena.flashingCubesChar.begin() + i);
-			arena.flashingCubesInt.erase(arena.flashingCubesInt.begin() + i);
-			arena.flashingCubesTime.erase(arena.flashingCubesTime.begin() + i);*/
 			obstaclesList.insert(obstaclesList.begin(),eventsList[i].launch_obstacle());
 			obstaclesList[0].init();
 			eventsList.erase(eventsList.begin() + i);
 		}
 	}
+
+	arena.flashing_cube();
 
 	t += 0.01f; // increment movement variables
 
@@ -291,8 +300,15 @@ void renderScene() {
 		obstaclesList[i].render_obstacle(myGraphics);
 	}
 
-	// FLASHING A CUBE
+	for (int i = 0; i < obstaclesList.size(); i++) {
+		if (obstaclesList[i].obstacleDirection == 'X') {
+			obstaclesList.erase(obstaclesList.begin() + i);
+			i--;
+		}
+	}
 
+	// FLASHING A CUBE
+	arena.flashing_cube();
 	//flashing_time++;
 	
 

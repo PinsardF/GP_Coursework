@@ -31,11 +31,6 @@ BoundaryBox southWallBox;
 BoundaryBox eastWallBox;
 BoundaryBox westWallBox;
 char shot_direction;
-int th_cube = 0;
-int step = 0;
-int frozen;
-int flashing_time;
-int flash;
 
 Arena::Arena() {
 	shot_direction = 'v';
@@ -111,7 +106,7 @@ void Arena::update_arena(Graphics graphics) {
 	arena.proj_matrix = graphics.proj_matrix;
 
 	glm::mat4 mv_matrix_wall_N, mv_matrix_wall_S, mv_matrix_wall_E, mv_matrix_wall_O;
-	float original_x = 9.0f;
+	float original_x = 8.0f;
 	float original_z = 8.0f;
 
 	for (int i = 0; i < size(wall_N); i++) {
@@ -149,75 +144,45 @@ void Arena::update_arena(Graphics graphics) {
 
 void Arena::color_a_cube(int index, glm::vec4 color) {
 	switch (flashingCubesChar[index]) {
-	case 'S':
+	case 'N':
 		wall_S[flashingCubesInt[index]].fillColor = color; // Dark red color;
 		break;
-	case 'N':
+	case 'S':
 		wall_N[flashingCubesInt[index]].fillColor = color; // Dark red color;
 		break;
-	case 'E':
+	case 'W':
 		wall_E[flashingCubesInt[index]].fillColor = color; // Dark red color;
 		break;
-	case 'W':
+	case 'E':
 		wall_O[flashingCubesInt[index]].fillColor = color; // Dark red color;
 		break;
 	default:
-		cout << "A problem has been occured" << endl;
+		cout << "A problem has occured" << endl;
 	}
-	/*switch (flashingCubesChar[index]) {
-	case 'S':
-		wall_S[flashingCubesInt[index]].fillColor = color;
-		break;
-	case 'N':
-		break;
-	case 'E':
-		break;
-	case 'W':
-		break;
-	}*/
 }
 
 void Arena::flashing_cube() {
 
 	for (int i = 0; i < flashingCubesInt.size(); i++) {
-		if (flashingCubesTime[i] == 60 || flashingCubesTime[i] == 20) {
+		if (flashingCubesTime[i] == 120 || flashingCubesTime[i] == 40) {
 			color_a_cube(i, glm::vec4(150.0f, 0.0f, 0.0f, 1.0f));
 		}
-		else if (flashingCubesTime[i] == 40) {
+		else if (flashingCubesTime[i] == 80) {
 			color_a_cube(i, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		}
-	}
-	/*if (shot_direction == 'v') { // Manage with time
-		srand(time(NULL));
-		shot_direction = walls[rand() % 4];
-
-		if (shot_direction == 'S' || shot_direction == 'N') th_cube = rand() % 19;
-		else th_cube = rand() % 17;
-	}
-
-	// Flashing a cube and throw a projectile
-	if (frozen == 150) { // When the break is finished ...
-
-		if (flashing_time < 60) { // Beginning of flashing
-			if (flash == 10) {
-				color_a_cube(th_cube, glm::vec4(150.0f, 0.0f, 0.0f, 1.0f));
-				flash++;
-			}
-			else if (flash == 20) {
-				color_a_cube(th_cube, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-				flash = 0;
-			}
-			else flash++;
-
-			flashing_time++;
+		else if (flashingCubesTime[i] == 0) {
+			color_a_cube(i, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+			flashingCubesChar[i] = 'X';
 		}
-		else { // Flashing is finished and we are enable to throw a projectile
-			flashing_time = 0;
-			frozen = 0;
-			flash = 0;
-			color_a_cube(th_cube, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)); // Original color
-			shot_direction = 'v';
+		flashingCubesTime[i] --;
+	}
+
+	for (int i = 0; i < flashingCubesInt.size(); i++) {
+		if (flashingCubesChar[i] == 'X') {
+			flashingCubesChar.erase(flashingCubesChar.begin() + i);
+			flashingCubesInt.erase(flashingCubesInt.begin() + i);
+			flashingCubesTime.erase(flashingCubesTime.begin() + i);
+			i--;
 		}
 	}
-	else frozen++;*/
 }

@@ -52,30 +52,22 @@ void Obstacle::update_obstacle() {
 	switch (obstacleDirection) {
 	case 'E':
 		if (obstaclePosition.x < -9.0f) {
-			obstaclePosition.x = 9.0f;
-			obstacleBox.max_position.x = 9.45f;
-			obstacleBox.min_position.x = 8.55f;
+			obstacleDirection = 'X';
 		}
 		break;
 	case 'W':
 		if (obstaclePosition.x > 9.0f) {
-			obstaclePosition.x = -9.0f;
-			obstacleBox.max_position.x = -8.55f;
-			obstacleBox.min_position.x = -9.45f;
+			obstacleDirection = 'X';
 		}
 		break;
 	case 'N':
 		if (obstaclePosition.z > 9.0f) {
-			obstaclePosition.z = -9.0f;
-			obstacleBox.max_position.z = -8.55f;
-			obstacleBox.min_position.z = -9.45f;
+			obstacleDirection = 'X';
 		}
 		break;
 	case 'S':
 		if (obstaclePosition.z <-9.0f) {
-			obstaclePosition.z = 9.0f;
-			obstacleBox.max_position.z = 9.45f;
-			obstacleBox.min_position.z = 8.55f;
+			obstacleDirection = 'X';
 		}
 		break;
 	}
