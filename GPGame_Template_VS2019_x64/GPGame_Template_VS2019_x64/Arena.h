@@ -5,11 +5,12 @@ using namespace std;
 class Arena
 {
 public:
-	Cube wall_N[19];
-	Cube wall_S[19];
-	Cube wall_E[17];
-	Cube wall_O[17];
-	Cube arena;
+	Cube	wall_N[19];
+	Cube	wall_S[19];
+	Cube	wall_E[17];
+	Cube	wall_O[17];
+	Cube	arena;
+	Cube	myFloor;
 	char shot_direction;
 	glm::vec4 original_cube_color;
 

@@ -17,6 +17,7 @@ using namespace std;
 // Personal classes
 #include "Player.h"
 #include "Arena.h"
+#include "Wave.h"
 
 // MAIN FUNCTIONS
 void startup();
@@ -38,17 +39,29 @@ float       lastTime = 0.0f;    // variable to keep overall time.
 bool        keyStatus[1024];    // Hold key status.
 bool		mouseEnabled = true; // keep track of mouse toggle.
 
+int		frozen = 0, flashing_time = 0, flash = 0, shot_direction_picker = 0, th_cube = 0;
+char	walls[4] = { 'N','S','E','O' };
+bool	throwing = false;
+bool	launch = false;
+
+
+
+float pos_x = 0.0f;
+float pos_z = 0.0f;
+
+
+
+
 // MAIN GRAPHICS OBJECT
 Graphics    myGraphics;        // Runing all the graphics in this object
 
 // Objects
-Cube    myFloor;
 Cube	flashing_cube;
 Player	player;
 Arena	arena;
-int		frozen = 0, flashing_time = 0, flash = 0, shot_direction_picker = 0, th_cube = 0;
-char	walls[4] = { 'N','S','E','O' };
-bool	throwing = false;
+Wave	wave;
+
+Cube	projectile;
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -108,9 +121,7 @@ void startup() {
 	player.init();
 	arena.init();
 
-	myFloor.Load();
-	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
-	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
+	projectile.Load();
 
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
@@ -177,6 +188,18 @@ void updateSceneElements() {
 	if (keyStatus[GLFW_KEY_DOWN]) player.position.z -= 0.007f;
 	if (keyStatus[GLFW_KEY_RIGHT]) player.position.x -= 0.007f;
 
+
+
+
+	glm::mat4 pos_projectile =
+		glm::translate(glm::vec3(pos_x, player.position.y, pos_z)) *
+		glm::mat4(1.0f);
+	projectile.mv_matrix = myGraphics.viewMatrix * pos_projectile;
+	projectile.proj_matrix = myGraphics.proj_matrix;
+
+
+
+
 	glm::mat4 pos_player =
 		glm::translate(glm::vec3(player.position.x, player.position.y, player.position.z)) *
 		glm::mat4(1.0f);
@@ -184,11 +207,11 @@ void updateSceneElements() {
 	player.character.proj_matrix = myGraphics.proj_matrix;
 
 	// Calculate floor position and resize
-	myFloor.mv_matrix = myGraphics.viewMatrix *
+	arena.myFloor.mv_matrix = myGraphics.viewMatrix *
 		glm::translate(glm::vec3(0.0f, 0.0f, 0.0f)) *
 		glm::scale(glm::vec3(1000.0f, 0.001f, 1000.0f)) *
 		glm::mat4(1.0f);
-	myFloor.proj_matrix = myGraphics.proj_matrix;
+	arena.myFloor.proj_matrix = myGraphics.proj_matrix;
 
 	glm::mat4 mv_matrix_arena =
 		glm::translate(glm::vec3(0.0f, 0.003f, 0.0f)) *
@@ -243,11 +266,12 @@ void renderScene() {
 	myGraphics.ClearViewport();
 
 	// Draw objects in screen
-	myFloor.Draw();
 	player.render_character();
 	arena.render_arena();
 
 
+
+	projectile.Draw();
 
 
 
@@ -263,12 +287,12 @@ void renderScene() {
 	// Flashing a cube and throw a projectile
 	if (frozen == 1500) { // When the break is finished ...
 
-		if (flashing_time < 800) { // Beginning of flashing
-			if (flash == 200) {
+		if (flashing_time < 600) { // Beginning of flashing
+			if (flash == 100) {
 				arena.color_a_cube(th_cube, glm::vec4(150.0f, 0.0f, 0.0f, 1.0f));
 				flash++;
 			}
-			else if (flash == 400) {
+			else if (flash == 200) {
 				arena.color_a_cube(th_cube, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 				flash = 0;
 			}
@@ -276,19 +300,38 @@ void renderScene() {
 
 			flashing_time++;
 		}
-		else { // Flashing is finished and we throw a projectile
+		else { // Flashing is finished and we are enable to throw a projectile
 			flashing_time = 0;
 			frozen = 0;
 			flash = 0;
 			arena.color_a_cube(th_cube, arena.original_cube_color); // Original color
+			launch = true;
 			arena.shot_direction = 'v';
-
-			// Throw projectile
-
-
 		}
 	}
-	else frozen++;
+	else {
+		if (launch) {
+			// Throw projectile
+			switch (arena.shot_direction) {
+			case 'S':
+				pos_z -= 0.02f;
+				break;
+			case 'N':
+				pos_z += 0.02f;
+				break;
+			case 'E':
+				pos_x += 0.02f;
+				break;
+			case 'O':
+				pos_x -= 0.02f;
+				break;
+			default:
+				break;
+			}
+			//launch = false;
+		}
+		frozen++;
+	}
 }
 
 

@@ -16,12 +16,13 @@ using namespace std;
 #include <vector>
 #include "Arena.h"
 
-Cube wall_N[19];
-Cube wall_S[19];
-Cube wall_E[17];
-Cube wall_O[17];
-Cube arena;
-char shot_direction;
+Cube	wall_N[19];
+Cube	wall_S[19];
+Cube	wall_E[17];
+Cube	wall_O[17];
+Cube	myFloor;
+Cube	arena;
+char	shot_direction;
 glm::vec4 original_cube_color; // Original cubes' color
 
 Arena::Arena() {
@@ -35,10 +36,12 @@ Arena::Arena() {
 }*/
 
 void Arena::init() {
-	Cube* visualArena = new Cube;
-	arena = *visualArena;
 	arena.Load();
 	arena.fillColor = glm::vec4(130.0f, 96.0f, 61.0f, 1.0f);    // White Colour
+
+	myFloor.Load();
+	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
+	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
 
 	for (int i = 0; i < size(wall_N); i++) {
 		wall_N[i].fillColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);    // Black Colour
@@ -59,6 +62,7 @@ void Arena::init() {
 
 void Arena::render_arena() {
 	arena.Draw();
+	myFloor.Draw();
 
 	for (int i = 0; i < size(wall_N); i++) {
 		wall_N[i].Draw();
