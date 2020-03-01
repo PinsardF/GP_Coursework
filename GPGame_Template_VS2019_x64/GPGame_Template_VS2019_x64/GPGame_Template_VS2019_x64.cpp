@@ -309,29 +309,7 @@ void renderScene() {
 			arena.shot_direction = 'v';
 		}
 	}
-	else {
-		if (launch) {
-			// Throw projectile
-			switch (arena.shot_direction) {
-			case 'S':
-				pos_z -= 0.02f;
-				break;
-			case 'N':
-				pos_z += 0.02f;
-				break;
-			case 'E':
-				pos_x += 0.02f;
-				break;
-			case 'O':
-				pos_x -= 0.02f;
-				break;
-			default:
-				break;
-			}
-			//launch = false;
-		}
-		frozen++;
-	}
+	else frozen++;
 }
 
 
