@@ -4,6 +4,7 @@ Cube		character;
 PlayerBoundaryBox hitbox;
 glm::vec3	pos_player;
 glm::vec3	cel_player;
+std::vector<char> pushedList;
 
 Player::Player() {
 	pos_player = glm::vec3(0.0f,0.5f,0.0f);
@@ -18,14 +19,55 @@ Player::Player() {
 void Player::init() {
 	character.Load();
 	character.fillColor = glm::vec4(0.0f, 0.0f, 255.0f, 1.0f); // Blue color
+	pushedList.clear();
 }
 
 void Player::update_player() {
-	pos_player += cel_player;
-	hitbox.playerBoxCenter = pos_player;
-	hitbox.minPlayerBox += cel_player;
-	hitbox.maxPlayerBox += cel_player;
-	cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
+	int x_forces = 0;
+	int z_forces = 0;
+	bool x_pushed = false;
+	bool z_pushed = false;
+
+	for (int i = 0; i < pushedList.size(); i++) {
+		switch (pushedList[i]) {
+		case 'U':
+			x_pushed = true;
+			x_forces -= 1;
+			break;
+		case 'D':
+			x_pushed = true;
+			x_forces += 1;
+			break;
+		case 'L':
+			z_pushed = true;
+			z_forces -= 1;
+			break;
+		case 'R':
+			z_pushed = true;
+			z_forces += 1;
+			break;
+		}
+	}
+	int dead = false;
+	if ((x_pushed && x_forces == 0) || (z_pushed && z_forces == 0)) {
+		dead = true;
+	}
+
+	if (!dead) {
+		pos_player += cel_player;
+		hitbox.playerBoxCenter = pos_player;
+		hitbox.minPlayerBox += cel_player;
+		hitbox.maxPlayerBox += cel_player;
+		cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
+	}
+	else {
+		pos_player = glm::vec3(-4.0f, 0.5f, -4.0f);
+		hitbox.playerBoxCenter = pos_player;
+		hitbox.minPlayerBox = pos_player - glm::vec3(0.5f,0.5f,0.5f);
+		hitbox.maxPlayerBox = pos_player + glm::vec3(0.5f, 0.5f, 0.5f);
+		cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
+	}
+	pushedList.clear();
 }
 
 void Player::render_character(Graphics graphics) {
@@ -47,18 +89,22 @@ bool Player::detect_collision_obstacles(Obstacle obstacle) {
 	return false;
 }
 
-void Player::detect_collision_walls(Arena arena) {
+void Player::detect_collision_walls() {
 	if (hitbox.maxPlayerBox.z > 8.5f) {
 		cel_player.z = -0.02f;
+		pushedList.push_back('U');//pushed by the UP
 	}
 	if (hitbox.minPlayerBox.z < -8.5f) {
 		cel_player.z = 0.02f;
+		pushedList.push_back('D');//pushed by the DOWN
 	}
 	if (hitbox.minPlayerBox.x < -8.5f) {
 		cel_player.x = 0.02f;
+		pushedList.push_back('R');//pushed by the RIGHT
 	}
 	if (hitbox.maxPlayerBox.x > 8.5f) {
 		cel_player.x = -0.02f;
+		pushedList.push_back('L');//pushed by the LEFT
 	}
 }
 
@@ -106,17 +152,21 @@ void Player::react_collision(Obstacle obstacle) {
 	if (x_distance < z_distance) {//calculates if the collision is on the x or the z axis of the player
 		if(centerCollision.z - pos_player.z < 0.0f){//if the player is moving towards the negative z...
 			cel_player.z = 0.002f;//we push him back to the positive z
+			pushedList.push_back('D');
 		}
 		else {//else we push him to the negative z
 			cel_player.z = -0.002f;
+			pushedList.push_back('U');
 		}
 	}
 	else {
 		if (centerCollision.x - pos_player.x < 0.0f) {
 			cel_player.x = 0.002f;
+			pushedList.push_back('R');
 		}
 		else {
 			cel_player.x = -0.002f;
+			pushedList.push_back('L');
 		}
 	}
 	cel_player += obstacle.obstacleVelocity;

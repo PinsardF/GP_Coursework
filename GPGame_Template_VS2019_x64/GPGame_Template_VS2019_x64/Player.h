@@ -23,6 +23,7 @@ public:
 	PlayerBoundaryBox hitbox;
 	glm::vec3	pos_player;
 	glm::vec3	cel_player;
+	std::vector<char> pushedList;
 
 	Player();
 	//~Player();
@@ -30,7 +31,7 @@ public:
 	void update_player();
 	void render_character(Graphics graphics);
 	bool detect_collision_obstacles(Obstacle obstacle);
-	void detect_collision_walls(Arena arena);
+	void detect_collision_walls();
 	glm::vec3 center_collision(Obstacle obstacle);
 	void react_collision(Obstacle obstacle);
 };

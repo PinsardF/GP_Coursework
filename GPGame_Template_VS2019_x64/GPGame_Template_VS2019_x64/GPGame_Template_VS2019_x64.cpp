@@ -196,7 +196,7 @@ void updateSceneElements() {
 			player.react_collision(obstaclesList[i]);
 		}
 	}
-	player.detect_collision_walls(arena);
+	player.detect_collision_walls();
 	player.update_player();
 
 	t += 0.01f; // increment movement variables
