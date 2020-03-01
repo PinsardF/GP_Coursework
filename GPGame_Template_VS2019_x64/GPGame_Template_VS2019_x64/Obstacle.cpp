@@ -63,22 +63,22 @@ void Obstacle::update_obstacle() {
 	case 'W':
 		if (obstaclePosition.x > obstacleEndPosition.x) {
 			obstaclePosition.x = -9.0f;
-			/*obstacleBox.max_position.x = ;
-			obstacleBox.min_position.x = ;*/
+			obstacleBox.max_position.x = -8.55f;
+			obstacleBox.min_position.x = -9.45f;
 		}
 		break;
 	case 'N':
 		if (obstaclePosition.z > obstacleEndPosition.z) {
 			obstaclePosition.z = -9.0f;
-			/*obstacleBox.max_position.x = ;
-			obstacleBox.min_position.x = ;*/
+			obstacleBox.max_position.z = -8.55f;
+			obstacleBox.min_position.z = -9.45f;
 		}
 		break;
 	case 'S':
 		if (obstaclePosition.z < obstacleEndPosition.z) {
 			obstaclePosition.z = 9.0f;
-			/*obstacleBox.max_position.x = ;
-			obstacleBox.min_position.x = ;*/
+			obstacleBox.max_position.z = 9.45f;
+			obstacleBox.min_position.z = 8.55f;
 		}
 		break;
 	}

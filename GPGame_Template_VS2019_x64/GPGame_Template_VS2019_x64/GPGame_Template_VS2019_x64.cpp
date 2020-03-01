@@ -188,55 +188,15 @@ void updateSceneElements() {
 		glm::mat4(1.0f);
 	myFloor.proj_matrix = myGraphics.proj_matrix;
 
-	glm::mat4 mv_matrix_arena =
-		glm::translate(glm::vec3(0.0f, 0.003f, 0.0f)) *
-		glm::scale(glm::vec3(17.0f, 0.001f, 17.0f)) *
-		glm::mat4(1.0f);
-	arena.arena.mv_matrix = myGraphics.viewMatrix * mv_matrix_arena;
-	arena.arena.proj_matrix = myGraphics.proj_matrix;
-
-	glm::mat4 mv_matrix_wall_N, mv_matrix_wall_S, mv_matrix_wall_E, mv_matrix_wall_O;
-	float original_x = 9.0f;
-	float original_z = 8.0f;
-
-	for (int i = 0; i < size(arena. wall_N); i++) {
-		mv_matrix_wall_N =
-			glm::translate(glm::vec3(original_x, 0.5f, 9.0f)) *
-			glm::mat4(1.0f);
-		arena.wall_N[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_N;
-		arena.wall_N[i].proj_matrix = myGraphics.proj_matrix;
-		
-		mv_matrix_wall_S =
-			glm::translate(glm::vec3(original_x, 0.5f, -9.0f)) *
-			glm::mat4(1.0f);
-		arena.wall_S[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_S;
-		arena.wall_S[i].proj_matrix = myGraphics.proj_matrix;
-
-		original_x--;
-	}
-
-	for (int i = 0; i < size(arena.wall_E); i++) {
-		mv_matrix_wall_E =
-			glm::translate(glm::vec3(-9.0f, 0.5f, original_z)) *
-			glm::mat4(1.0f);
-		arena.wall_E[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_E;
-		arena.wall_E[i].proj_matrix = myGraphics.proj_matrix;
-
-		mv_matrix_wall_O =
-			glm::translate(glm::vec3(9.0f, 0.5f, -original_z)) *
-			glm::mat4(1.0f);
-		arena.wall_O[i].mv_matrix = myGraphics.viewMatrix * mv_matrix_wall_O;
-		arena.wall_O[i].proj_matrix = myGraphics.proj_matrix;
-
-		original_z--;
-	}
-
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].update_obstacle();
 	}
 	for (int i = 0; i < obstaclesList.size(); i++) {
-		player.detect_collision(obstaclesList[i]);
+		if (player.detect_collision_obstacles(obstaclesList[i])) {
+			player.react_collision(obstaclesList[i]);
+		}
 	}
+	player.detect_collision_walls(arena);
 	player.update_player();
 
 	t += 0.01f; // increment movement variables
@@ -252,7 +212,7 @@ void renderScene() {
 	myFloor.Draw();
 	player.render_character(myGraphics);
 	arena.render_arena();
-	arena.update_arena();
+	arena.update_arena(myGraphics);
 
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].render_obstacle(myGraphics);

@@ -1,4 +1,5 @@
 #include <iostream>
+#include "BoundaryBox.h"
 using namespace std;
 #pragma once
 
@@ -11,6 +12,10 @@ public:
 	Cube wall_E[17];
 	Cube wall_O[17];
 	Cube arena;
+	BoundaryBox northWallBox;
+	BoundaryBox southWallBox;
+	BoundaryBox eastWallBox;
+	BoundaryBox westWallBox;
 	char shot_direction;
 	int th_cube;
 	int step;
@@ -19,5 +24,5 @@ public:
 	//~Arena();
 	void init();
 	void render_arena();
-	void update_arena();
+	void update_arena(Graphics graphics);
 };

@@ -23,6 +23,10 @@ Cube wall_S[19];
 Cube wall_E[17];
 Cube wall_O[17];
 Cube arena;
+BoundaryBox northWallBox;
+BoundaryBox southWallBox;
+BoundaryBox eastWallBox;
+BoundaryBox westWallBox;
 char shot_direction;
 int th_cube = 0;
 int step = 0;
@@ -41,6 +45,11 @@ void Arena::init() {
 	arena = *visualArena;
 	arena.Load();
 	arena.fillColor = glm::vec4(130.0f, 96.0f, 61.0f, 1.0f);    // White Colour
+
+	northWallBox = BoundaryBox(glm::vec3(0.0f,0.5f,9.0f),glm::vec3(9.5f,1.0f,9.5f),glm::vec3(-9.5f,0.0f,8.5f));
+	southWallBox = BoundaryBox(glm::vec3(0.0f, 0.5f, -9.0f), glm::vec3(9.5f, 1.0f, -8.5f), glm::vec3(-9.5f, 0.0f, -9.5f));
+	eastWallBox = BoundaryBox(glm::vec3(0.0f, 0.5f, 9.0f), glm::vec3(-8.5f, 1.0f, 9.5f), glm::vec3(-9.5f, 0.0f, -9.5f));
+	westWallBox = BoundaryBox(glm::vec3(0.0f, 0.5f, -9.0f), glm::vec3(9.5f, 1.0f, -9.5f), glm::vec3(8.5f, 0.0f, -9.5f));
 
 	for (int i = 0; i < size(wall_N); i++) {
 		wall_N[i].fillColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);    // Black Colour
@@ -73,7 +82,7 @@ void Arena::render_arena() {
 	}
 }
 
-void Arena::update_arena() {
+void Arena::update_arena(Graphics graphics) {
 	srand(time(NULL));
 	if (shot_direction == 'v') { // Manage with time
 		shot_direction = walls[rand() % 4];
@@ -116,4 +125,47 @@ void Arena::update_arena() {
 	}
 
 	step++;
+
+	glm::mat4 mv_matrix_arena =
+		glm::translate(glm::vec3(0.0f, 0.003f, 0.0f)) *
+		glm::scale(glm::vec3(17.0f, 0.001f, 17.0f)) *
+		glm::mat4(1.0f);
+	arena.mv_matrix = graphics.viewMatrix * mv_matrix_arena;
+	arena.proj_matrix = graphics.proj_matrix;
+
+	glm::mat4 mv_matrix_wall_N, mv_matrix_wall_S, mv_matrix_wall_E, mv_matrix_wall_O;
+	float original_x = 9.0f;
+	float original_z = 8.0f;
+
+	for (int i = 0; i < size(wall_N); i++) {
+		mv_matrix_wall_N =
+			glm::translate(glm::vec3(original_x, 0.5f, 9.0f)) *
+			glm::mat4(1.0f);
+		wall_N[i].mv_matrix = graphics.viewMatrix * mv_matrix_wall_N;
+		wall_N[i].proj_matrix = graphics.proj_matrix;
+
+		mv_matrix_wall_S =
+			glm::translate(glm::vec3(original_x, 0.5f, -9.0f)) *
+			glm::mat4(1.0f);
+		wall_S[i].mv_matrix = graphics.viewMatrix * mv_matrix_wall_S;
+		wall_S[i].proj_matrix = graphics.proj_matrix;
+
+		original_x--;
+	}
+
+	for (int i = 0; i < size(wall_E); i++) {
+		mv_matrix_wall_E =
+			glm::translate(glm::vec3(-9.0f, 0.5f, original_z)) *
+			glm::mat4(1.0f);
+		wall_E[i].mv_matrix = graphics.viewMatrix * mv_matrix_wall_E;
+		wall_E[i].proj_matrix = graphics.proj_matrix;
+
+		mv_matrix_wall_O =
+			glm::translate(glm::vec3(9.0f, 0.5f, -original_z)) *
+			glm::mat4(1.0f);
+		wall_O[i].mv_matrix = graphics.viewMatrix * mv_matrix_wall_O;
+		wall_O[i].proj_matrix = graphics.proj_matrix;
+
+		original_z--;
+	}
 }

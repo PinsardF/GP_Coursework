@@ -1,6 +1,7 @@
 //#include <iostream>
 #include "Obstacle.h"
 #include "PlayerBoundaryBox.h"
+#include "Arena.h"
 //#include <vector>
 //using namespace std;
 //#include <string>
@@ -22,12 +23,14 @@ public:
 	PlayerBoundaryBox hitbox;
 	glm::vec3	pos_player;
 	glm::vec3	cel_player;
-	std::vector<char> pushed;
 
 	Player();
 	//~Player();
 	void init();
 	void update_player();
 	void render_character(Graphics graphics);
-	void detect_collision(Obstacle obstacle);
+	bool detect_collision_obstacles(Obstacle obstacle);
+	void detect_collision_walls(Arena arena);
+	glm::vec3 center_collision(Obstacle obstacle);
+	void react_collision(Obstacle obstacle);
 };
