@@ -4,7 +4,6 @@
     <ClCompile Include="Arena.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="BoundaryBox.cpp" />
-    <ClCompile Include="CubeObject.cpp" />
     <ClCompile Include="ExplosionEmitter.cpp" />
     <ClCompile Include="ExplosionParticle.cpp" />
     <ClCompile Include="GPGame_Template_VS2019_x64.cpp" />
@@ -14,12 +13,12 @@
     <ClCompile Include="shapes.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="PlayerBoundaryBox.cpp" />
+    <ClCompile Include="Event.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arena.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="BoundaryBox.h" />
-    <ClInclude Include="CubeObject.h" />
     <ClInclude Include="ExplosionEmitter.h" />
     <ClInclude Include="ExplosionParticle.h" />
     <ClInclude Include="graphics.h" />
@@ -28,5 +27,6 @@
     <ClInclude Include="shapes.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="PlayerBoundaryBox.h" />
+    <ClInclude Include="Event.h" />
   </ItemGroup>
 </Project>

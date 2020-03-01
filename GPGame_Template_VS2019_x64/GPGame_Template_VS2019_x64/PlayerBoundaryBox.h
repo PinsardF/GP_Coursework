@@ -8,6 +8,5 @@ public:
 	glm::vec3 maxPlayerBox;
 
 	PlayerBoundaryBox();
-	void react_collision(Obstacle obstacle);
 };
 

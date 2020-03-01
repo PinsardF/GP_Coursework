@@ -18,6 +18,7 @@ using namespace std;
 #include "Player.h"
 #include "Arena.h"
 #include "Obstacle.h"
+#include "Event.h"
 
 // MAIN FUNCTIONS
 void startup();
@@ -43,10 +44,10 @@ bool		mouseEnabled = true; // keep track of mouse toggle.
 Graphics    myGraphics;        // Runing all the graphics in this object
 
 // Objects
-Cube    myFloor;
 Player	player;
 Arena	arena;
 std::vector<Obstacle> obstaclesList;
+std::vector<Event> eventsList;
 //int		flashing_time = 0, shot_direction_picker = 0;
 
 // Some global variable to do the animation.
@@ -107,12 +108,11 @@ void startup() {
 	player.init();
 	arena.init();
 
-	myFloor.Load();
-	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
-	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
+	/*obstaclesList.push_back(Obstacle(glm::vec3(9.0f, 0.5f, 0.0f), 'E', glm::vec3(0.9f, 0.9f, 2.0f)));
+	obstaclesList.push_back(Obstacle(glm::vec3(4.8f, 0.5f, 9.0f), 'S', glm::vec3(4.0f, 0.9f, 0.9f)));*/
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 0.0f), glm::vec3(0.9f, 0.9f, 2.0f),20));
+	eventsList.push_back(Event('O', glm::vec3(4.8f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f),30));
 
-	obstaclesList.push_back(Obstacle(glm::vec3(9.0f, 0.5f, 0.0f), glm::vec3(-9.0f, 0.5f, 0.0f), 'E', glm::vec3(0.9f, 0.9f, 2.0f)));
-	obstaclesList.push_back(Obstacle(glm::vec3(4.8f, 0.5f, 9.0f), glm::vec3(4.8f, 0.5f, -9.0f), 'S', glm::vec3(4.0f, 0.9f, 0.9f)));
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].init();
 	}
@@ -181,13 +181,6 @@ void updateSceneElements() {
 	if (keyStatus[GLFW_KEY_DOWN]) player.cel_player.z -= 0.1f;//CHANGE
 	if (keyStatus[GLFW_KEY_RIGHT]) player.cel_player.x -= 0.1f;//CHANGE
 
-	// Calculate floor position and resize
-	myFloor.mv_matrix = myGraphics.viewMatrix *
-		glm::translate(glm::vec3(0.0f, 0.0f, 0.0f)) *
-		glm::scale(glm::vec3(1000.0f, 0.001f, 1000.0f)) *
-		glm::mat4(1.0f);
-	myFloor.proj_matrix = myGraphics.proj_matrix;
-
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].update_obstacle();
 	}
@@ -198,6 +191,87 @@ void updateSceneElements() {
 	}
 	player.detect_collision_walls();
 	player.update_player();
+	arena.flashing_cube();
+
+	/*eventsList.shrink_to_fit();
+	obstaclesList.shrink_to_fit();*/
+	int j = 0;
+	float this_minimum = 0.0f;
+	float this_maximum = 0.0f;
+	for (int i = 0; i < eventsList.size(); i++) {
+		if (eventsList[i].timetostart == 60) {
+			switch (eventsList[i].eventDirection) {
+			case 'E':
+				this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
+				this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
+				j = (int)this_minimum + 8;
+				if ((int)eventsList[j].dim_event.z % 2 == 0) {
+					j++;
+				}
+				while (j < this_maximum) {
+					arena.flashingCubesChar.push_back(eventsList[j].eventDirection);
+					arena.flashingCubesTime.push_back(60);
+					arena.flashingCubesInt.push_back(j);
+					j++;
+				}
+				break;
+			case 'W':
+				this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
+				this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
+				j = (int)this_minimum + 8;
+				if ((int)eventsList[j].dim_event.z % 2 == 0) {
+					j++;
+				}
+				while (j < this_maximum) {
+					arena.flashingCubesChar.push_back(eventsList[j].eventDirection);
+					arena.flashingCubesTime.push_back(60);
+					arena.flashingCubesInt.push_back(j);
+					j++;
+				}
+				break;
+			case 'S':
+				this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
+				this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
+				j = (int)this_minimum + 8;
+				if ((int)eventsList[j].dim_event.x % 2 == 0) {
+					j++;
+				}
+				while (j < this_maximum) {
+					arena.flashingCubesChar.push_back(eventsList[j].eventDirection);
+					arena.flashingCubesTime.push_back(60);
+					arena.flashingCubesInt.push_back(j);
+					j++;
+				}
+				break;
+			case 'N':
+				this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
+				this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
+				j = (int)this_minimum + 8;
+				if ((int)eventsList[j].dim_event.x % 2 == 0) {
+					j++;
+				}
+				while (j < this_maximum) {
+					arena.flashingCubesChar.push_back(eventsList[j].eventDirection);
+					arena.flashingCubesTime.push_back(60);
+					arena.flashingCubesInt.push_back(j);
+					j++;
+				}
+				break;
+			}
+			eventsList[i].timetostart--;
+		}
+		else if (eventsList[i].timetostart > 0) {
+			eventsList[i].timetostart--;
+		}
+		else {
+			/*arena.flashingCubesChar.erase(arena.flashingCubesChar.begin() + i);
+			arena.flashingCubesInt.erase(arena.flashingCubesInt.begin() + i);
+			arena.flashingCubesTime.erase(arena.flashingCubesTime.begin() + i);*/
+			obstaclesList.insert(obstaclesList.begin(),eventsList[i].launch_obstacle());
+			obstaclesList[0].init();
+			eventsList.erase(eventsList.begin() + i);
+		}
+	}
 
 	t += 0.01f; // increment movement variables
 
@@ -209,9 +283,8 @@ void renderScene() {
 	myGraphics.ClearViewport();
 
 	// Draw objects in screen
-	myFloor.Draw();
 	player.render_character(myGraphics);
-	arena.render_arena();
+	arena.render_arena(myGraphics);
 	arena.update_arena(myGraphics);
 
 	for (int i = 0; i < obstaclesList.size(); i++) {

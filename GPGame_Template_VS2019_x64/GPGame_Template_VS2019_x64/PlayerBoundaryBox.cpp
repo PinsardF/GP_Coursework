@@ -9,10 +9,3 @@ PlayerBoundaryBox::PlayerBoundaryBox() {
 	minPlayerBox = glm::vec3(-0.5f, 0.0f, -0.5f) + playerBoxCenter;
 	maxPlayerBox = glm::vec3(0.5f,1.0f,0.5f) + playerBoxCenter;
 }
-
-void PlayerBoundaryBox::react_collision(Obstacle obstacle) {
-	/*switch (obstacle.obstacleDirection) {
-	case 'E':
-
-	}*/
-}
