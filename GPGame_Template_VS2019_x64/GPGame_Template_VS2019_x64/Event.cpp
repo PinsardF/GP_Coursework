@@ -30,8 +30,13 @@ Event::Event(char input_type) {
 	type = input_type;
 }
 
-void Event::update_event() {
-
+Missile Event::launch_missile() {
+	int rand_x = rand() % 32;
+	int rand_z = rand() % 32;
+	float pos_x = 0.5f * (16 - rand_x);
+	float pos_z = 0.5f * (16 - rand_z);
+	cout << pos_x << ' ' << pos_z;
+	return Missile(glm::vec3(pos_x, 0.0f, pos_z));
 }
 
 Obstacle Event::launch_obstacle(){

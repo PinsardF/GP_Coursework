@@ -67,14 +67,13 @@ void Missile::pathfinding(Player player) {
 	float zPath = targetPath.z / sqrt((targetPath.x * targetPath.x) + (targetPath.z * targetPath.z));
 	vel_missile.x = xPath / 11.0f;
 	vel_missile.z = zPath / 11.0f;
-
+	
 	/*
-	Node: int x, int y, float f(), bool available, bool explored, int origin_x, int origin_z;
-	Node map[34][34];
-	for(int i=0;i<34;i++){
-		for(int j=0;j<34;j++){
+	Node map[33][33];
+	for(int i=0;i<33;i++){
+		for(int j=0;j<33;j++){
 			map[i][j].x = i;
-			map[i][j].y = j;
+			map[i][j].z = j;
 			map[i][j].explored = false;
 			map[i][j].path = false;
 		}
@@ -84,22 +83,29 @@ void Missile::pathfinding(Player player) {
 	std::vector<Node> explored_nodes;
 	std::vector<Node> final_path;
 	bool done = false;
-	this_x = missile.pos_missile.x;//calcul pour transformer la position en cases
-	this_y = missile.pos_missile.y;//idem
-	this_node = map[this_x]{this_y];
+	int this_x;
+	int this_z;
+	this_x = 16 - 2*pos_missile.x;//calcul pour transformer la position en cases
+	this_z = 16 - 2*pos_missile.z;//idem
+	Node this_node = map[this_x][this_z];
 	Node old_node = this_node;
-	while(!done){//While player isn't reached....
-		for(int add_x=-1;add_x<1;add_x++){//for each neighbor cell
-			for(int add_y = -1; add_x < 1; add_y++){
-			if(map[this_x + add_x][this_y + add_y].available){
-					if(x+add_x == missile.pos_missile.x && y+add_y == missile.pos_missile.y){//calcul pour transformer la position en cases
-						map[x+add_x][y+add_y].x = old_node.x;
-						map[x+add_x][y+add_y].y = old_node.y;
-						path_nodes.add(map[x+add_x][y+add_y]);
+	float min_f = 0.0f;
+	Node min_node = Node();
+	int compteur = 0;
+	while(!done && compteur < 100){//While player isn't reached....
+		compteur++;
+		for(int add_x=-1;add_x<=1;add_x++){//for each neighbor cell
+			for(int add_z = -1; add_z <= 1; add_z++){
+			if(map[this_x + add_x][this_z + add_z].available){
+				//cout << this_x + add_x << ' ' << this_z + add_z << endl;
+					if(this_x+add_x == 16 - 2*player.pos_player.x && this_z+add_z == 16-2*player.pos_player.z){
+						map[this_x+add_x][this_z+add_z].x = old_node.x;
+						map[this_x+add_x][this_z+add_z].z = old_node.z;
+						path_nodes.push_back(map[this_x+add_x][this_z+add_z]);
 						done = true;
 					} else {
-						if(!map[this_x + add_x][this_y + add_y].explored){
-							explored_nodes.push_back(map[this_x + add_x][this_y + add_y]);
+						if(!map[this_x + add_x][this_z + add_z].explored){
+							explored_nodes.push_back(map[this_x + add_x][this_z + add_z]);
 						}
 					}
 				}
@@ -108,20 +114,24 @@ void Missile::pathfinding(Player player) {
 
 		min_f = 0.0f;//find the minimum f
 		for(int i=0;i<explored_nodes.size();i++){
-			if(explored_nodes[i].f() < min_f){
-				min_f = explored_nodes[i].f();
+			if(explored_nodes[i].f(player,pos_missile.x,pos_missile.z) < min_f){
+				min_f = explored_nodes[i].f(player, pos_missile.x, pos_missile.z);
 			}	
 		}
 
 		for(int i=0;i<explored_nodes.size();i++){//find the node with the minimum f previously determindes
-			if(explored_nodes[i].f() <= min_f){
-				min_f = map[this_x + add_x][this_y + add_y].f;
-				min_node = map[this_x + add_x][this_y + add_y];
+			if(explored_nodes[i].f(player,pos_missile.x,pos_missile.z) <= min_f){
+				min_f = map[explored_nodes[i].x][explored_nodes[i].z].f(player,pos_missile.x,pos_missile.z);
+				min_node = map[explored_nodes[i].x][explored_nodes[i].z];
 			}
 		}
 		this_node = min_node;
 		path_nodes.push_back(this_node);
 	}
+	for (int i = 0; i < 3; i++) {
+		cout << explored_nodes[i].x << ' ' << explored_nodes[i].z << endl;
+	}
+	
 	//We have all the cells found
 	bool reached = false;
 	Node previous_node = map[player.pos_player.x][player.pos_player.y];//calcul blablabla

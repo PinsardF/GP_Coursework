@@ -3,6 +3,7 @@
 #include "graphics.h"
 #include "ExplosionEmitter.h"
 #include "Player.h"
+#include "Node.h"
 
 class Missile{
 public:

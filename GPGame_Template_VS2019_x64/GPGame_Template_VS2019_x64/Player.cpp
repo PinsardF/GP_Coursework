@@ -61,11 +61,7 @@ void Player::update_player() {
 		cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
 	}
 	else {
-		pos_player = glm::vec3(-4.0f, 0.5f, -4.0f);
-		hitbox.playerBoxCenter = pos_player;
-		hitbox.minPlayerBox = pos_player - glm::vec3(0.5f,0.5f,0.5f);
-		hitbox.maxPlayerBox = pos_player + glm::vec3(0.5f, 0.5f, 0.5f);
-		cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
+		death();
 	}
 	pushedList.clear();
 }
@@ -105,6 +101,13 @@ void Player::detect_collision_walls() {
 		cel_player.x = -0.02f;
 		pushedList.push_back('L');//pushed by the LEFT
 	}
+}
+
+bool Player::detect_collision_missile(float input_x, float input_z) {
+	if (abs(input_x - pos_player.x) < 0.95f && abs(input_z - pos_player.z) < 0.95f) {
+		return true;
+	}
+	return false;
 }
 
 glm::vec3 Player::center_collision(Obstacle obstacle) {
@@ -169,4 +172,12 @@ void Player::react_collision(Obstacle obstacle) {
 		}
 	}
 	cel_player += obstacle.obstacleVelocity;
+}
+
+void Player::death() {
+	pos_player = glm::vec3(-4.0f, 0.5f, -4.0f);
+	hitbox.playerBoxCenter = pos_player;
+	hitbox.minPlayerBox = pos_player - glm::vec3(0.5f, 0.5f, 0.5f);
+	hitbox.maxPlayerBox = pos_player + glm::vec3(0.5f, 0.5f, 0.5f);
+	cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
 }

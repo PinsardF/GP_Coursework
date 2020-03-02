@@ -51,9 +51,8 @@ Player	player;
 Arena	arena;
 std::vector<Obstacle> obstaclesList;
 std::vector<Event> eventsList;
-Missile missile = Missile(glm::vec3(8.0f, 0.5f, 8.0f));
-//ExplosionEmitter boom = ExplosionEmitter(glm::vec3(3.0f, 0.5f, 3.0f));
-//Cube testcube;
+std::vector<Missile> missilesList;
+//Missile missile = Missile(glm::vec3(7.5f, 0.5f, 7.5f));
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -112,12 +111,9 @@ void startup() {
 
 	player.init();
 	arena.init();
-	missile.init();
-	//missile.pathfinding(player);
-	//boom.initExplosion();
-	//testcube.Load();
+	//missile.init();
 
-	/*eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 0.5f), glm::vec3(0.9f, 0.9f, 2.0f),120));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 0.5f), glm::vec3(0.9f, 0.9f, 2.0f),120));
 	eventsList.push_back(Event('O', glm::vec3(5.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f),150));
 	eventsList.push_back(Event('O', glm::vec3(-9.0f, 0.5f, 1.0f), glm::vec3(0.9f, 0.9f, 10.0f), 200));
 	eventsList.push_back(Event('O', glm::vec3(4.5f, 0.5f, -9.0f), glm::vec3(8.0f, 0.9f, 0.9f), 200));
@@ -139,8 +135,14 @@ void startup() {
 	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -1.5f), glm::vec3(0.9f, 0.9f, 14.0f), 1400));
 	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 7.5f), glm::vec3(0.9f, 0.9f, 1.0f), 1400));
 	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -8.0f), glm::vec3(0.9f, 0.9f, 1.0f), 1500));
-	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 1.5f), glm::vec3(0.9f, 0.9f, 15.0f), 1500));*/
-	
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 1.5f), glm::vec3(0.9f, 0.9f, 15.0f), 1500));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1700));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1700));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1800));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1900));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2000));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2000));
+
 
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].init();
@@ -218,78 +220,102 @@ void updateSceneElements() {
 			player.react_collision(obstaclesList[i]);
 		}
 	}
+	for (int i = 0; i < missilesList.size(); i++) {
+		if (missilesList[i].missileTimeToLive > 0) {
+			missilesList[i].update_missile(myGraphics);
+		}
+		if (missilesList[i].missileLoadingTime <= 0 && missilesList[i].missileTimeToLive > 5) {
+			if (!player.detect_collision_missile(missilesList[i].pos_missile.x, missilesList[i].pos_missile.z)) {
+				missilesList[i].pathfinding(player);
+			}
+			else {
+				player.death();
+				missilesList[i].missileTimeToLive = 5;
+			}
+		}
+	}
 	player.detect_collision_walls();
 	player.update_player();
 	arena.flashing_cube();
-	missile.update_missile(myGraphics);
-	if (missile.missileLoadingTime <= 0 && missile.missileTimeToLive > 5) {
+	//missile.update_missile(myGraphics);
+	/*if (missile.missileLoadingTime <= 0 && missile.missileTimeToLive > 5) {
 		missile.pathfinding(player);
-	}
+	}*/
 
-	int j = 0;
+	int j = 0;//managing events
 	float this_minimum = 0.0f;
 	float this_maximum = 0.0f;
 	for (int i = 0; i < eventsList.size(); i++) {
-		if (eventsList[i].timetostart == 120) {
-			switch (eventsList[i].eventDirection) {
-			case 'E':
-				this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
-				this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
-				j = (int) (this_minimum+0.5f);
-				cout << j << endl;
-				cout << this_minimum << ' ' << this_maximum << endl;
-				while (j < this_maximum) {
-					arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
-					arena.flashingCubesTime.push_back(120);
-					arena.flashingCubesInt.push_back(8+j);
-					cout << 8 + j << endl;
-					j++;
+		switch (eventsList[i].type) {
+		case 'O':
+			if (eventsList[i].timetostart == 120) {
+				switch (eventsList[i].eventDirection) {
+				case 'E':
+					this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
+					this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
+					j = (int)(this_minimum + 0.5f);
+					while (j < this_maximum) {
+						arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
+						arena.flashingCubesTime.push_back(120);
+						arena.flashingCubesInt.push_back(8 + j);
+						j++;
+					}
+					break;
+				case 'W':
+					this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
+					this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
+					j = (int)(this_minimum + 0.5f);
+					while (j < this_maximum) {
+						arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
+						arena.flashingCubesTime.push_back(120);
+						arena.flashingCubesInt.push_back(8 + j);
+						j++;
+					}
+					break;
+				case 'S':
+					this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
+					this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
+					j = (int)(this_minimum + 0.5f);
+					while (j < this_maximum) {
+						arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
+						arena.flashingCubesTime.push_back(120);
+						arena.flashingCubesInt.push_back(8 - j);
+						j++;
+					}
+					break;
+				case 'N':
+					this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
+					this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
+					j = (int)(this_minimum + 0.5f);
+					while (j < this_maximum) {
+						arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
+						arena.flashingCubesTime.push_back(120);
+						arena.flashingCubesInt.push_back(8 - j);
+						j++;
+					}
+					break;
 				}
-				break;
-			case 'W':
-				this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
-				this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
-				j = (int)(this_minimum + 0.5f);
-				while (j < this_maximum) {
-					arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
-					arena.flashingCubesTime.push_back(120);
-					arena.flashingCubesInt.push_back(8+j);
-					j++;
-				}
-				break;
-			case 'S':
-				this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
-				this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
-				j = (int)(this_minimum + 0.5f);
-				while (j < this_maximum) {
-					arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
-					arena.flashingCubesTime.push_back(120);
-					arena.flashingCubesInt.push_back(8-j);
-					j++;
-				}
-				break;
-			case 'N':
-				this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
-				this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
-				j = (int)(this_minimum + 0.5f);
-				while (j < this_maximum) {
-					arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
-					arena.flashingCubesTime.push_back(120);
-					arena.flashingCubesInt.push_back(8-j);
-					j++;
-				}
-				break;
-			}
-			eventsList[i].timetostart--;
+				eventsList[i].timetostart--;
 
-		}
-		else if (eventsList[i].timetostart > 0) {
-			eventsList[i].timetostart--;
-		}
-		else {
-			obstaclesList.insert(obstaclesList.begin(),eventsList[i].launch_obstacle());
-			obstaclesList[0].init();
-			eventsList.erase(eventsList.begin() + i);
+			}
+			else if (eventsList[i].timetostart > 0) {
+				eventsList[i].timetostart--;
+			}
+			else {
+				obstaclesList.insert(obstaclesList.begin(), eventsList[i].launch_obstacle());
+				obstaclesList[0].init();
+				eventsList.erase(eventsList.begin() + i);
+			}
+			break;
+		case 'M':
+			if (eventsList[i].timetostart > 0) {
+				eventsList[i].timetostart--;
+			}
+			else if (eventsList[i].timetostart == 0) {
+				missilesList.insert(missilesList.begin(), eventsList[i].launch_missile());
+				missilesList[0].init();
+				eventsList.erase(eventsList.begin() + i);
+			}
 		}
 	}
 
@@ -308,11 +334,11 @@ void renderScene() {
 	player.render_character(myGraphics);
 	arena.render_arena(myGraphics);
 	arena.update_arena(myGraphics);
-	missile.render_missile(myGraphics);
-	if (missile.missileTimeToLive < 5) {
+	//missile.render_missile(myGraphics);
+
+	/*if (missile.missileTimeToLive < 5) {
 		missile.explosion.update(myGraphics);
-	}
-	//boom.update(myGraphics);
+	}*/
 
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].render_obstacle(myGraphics);
@@ -325,37 +351,19 @@ void renderScene() {
 		}
 	}
 
-	/*glm::mat4 mv_cube =
-		glm::translate(glm::vec3(0.0f,5.0f,0.0f)) *
-		glm::mat4(1.0f);
-	testcube.mv_matrix = myGraphics.viewMatrix * mv_cube;
-	testcube.proj_matrix = myGraphics.proj_matrix;
-	testcube.Draw();*/
-
-	// FLASHING A CUBE
+	for (int i = 0; i < missilesList.size(); i++) {
+		missilesList[i].render_missile(myGraphics);
+		if (missilesList[i].missileTimeToLive < 5 && missilesList[i].missileTimeToLive > -30) {
+			missilesList[i].explosion.update(myGraphics);
+		}
+	}
+	for (int i = 0; i < missilesList.size(); i++) {
+		if (missilesList[i].missileTimeToLive < -30) {
+			missilesList.erase(missilesList.begin() + i);
+			i--;
+		}
+	}
 	arena.flashing_cube();
-	//flashing_time++;
-	
-
-	/*if (flashing_time < 1000) {
-		cout << flashing_time << "th step" << endl;
-		flashing_time++;
-	}
-	else if (flashing_time == 1000) {
-		cout << "FINISHED" << endl;
-		flashing_time++;
-	}
-
-	if (step == 200) player.character.fillColor = glm::vec4(0.0f, 153.0f, 0.0f, 1.0f);
-	else if (step == 400) {
-		player.character.fillColor = glm::vec4(204.0f, 0.0f, 0.0f, 1.0f);
-		step = 0;
-	}*/
-
-
-
-	// CHOOSING THE CUBE TO FLASH WITHIN A CHOOSEN AREA
-
 }
 
 

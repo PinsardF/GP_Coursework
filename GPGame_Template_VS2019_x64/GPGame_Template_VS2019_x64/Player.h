@@ -32,6 +32,8 @@ public:
 	void render_character(Graphics graphics);
 	bool detect_collision_obstacles(Obstacle obstacle);
 	void detect_collision_walls();
+	bool detect_collision_missile(float input_x, float input_z);
 	glm::vec3 center_collision(Obstacle obstacle);
 	void react_collision(Obstacle obstacle);
+	void death();
 };
