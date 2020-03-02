@@ -1,2 +1,13 @@
-﻿  GPGame_Template_VS2019_x64.cpp
+﻿  Arena.cpp
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Arena.cpp(52,42): warning C4138: '*/' trouvé à l'extérieur du commentaire
+  BoundaryBox.cpp
+  Event.cpp
+C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\GPGame_Template_VS2019_x64\Event.cpp(35,12): warning C4244: 'argument' : conversion de 'time_t' en 'unsigned int', perte possible de données
+  GPGame_Template_VS2019_x64.cpp
+  Missile.cpp
+  Node.cpp
+  Obstacle.cpp
+  Player.cpp
+  PlayerBoundaryBox.cpp
+  Génération de code en cours...
   GPGame_Template_VS2019_x64.vcxproj -> C:\Users\flori\source\repos\GP_Coursework\GPGame_Template_VS2019_x64\x64\Debug\GPGame_Template_VS2019_x64.exe

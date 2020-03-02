@@ -111,7 +111,6 @@ void startup() {
 
 	player.init();
 	arena.init();
-	//missile.init();
 
 	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 0.5f), glm::vec3(0.9f, 0.9f, 2.0f),120));
 	eventsList.push_back(Event('O', glm::vec3(5.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f),150));
@@ -142,7 +141,6 @@ void startup() {
 	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1900));
 	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2000));
 	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2000));
-
 
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].init();
@@ -207,40 +205,42 @@ void updateSceneElements() {
 	// Do not forget your ( T * R * S ) http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 	
 	// Player's movements
-	if (keyStatus[GLFW_KEY_UP]) player.cel_player.z += 0.1f;//CHANGE TO 0.07f
-	if (keyStatus[GLFW_KEY_LEFT]) player.cel_player.x += 0.1f;//CHANGE
-	if (keyStatus[GLFW_KEY_DOWN]) player.cel_player.z -= 0.1f;//CHANGE
-	if (keyStatus[GLFW_KEY_RIGHT]) player.cel_player.x -= 0.1f;//CHANGE
+	if (player.alive) {
+		if (keyStatus[GLFW_KEY_UP]) player.cel_player.z += 0.1f;
+		if (keyStatus[GLFW_KEY_LEFT]) player.cel_player.x += 0.1f;
+		if (keyStatus[GLFW_KEY_DOWN]) player.cel_player.z -= 0.1f;
+		if (keyStatus[GLFW_KEY_RIGHT]) player.cel_player.x -= 0.1f;
+
+		for (int i = 0; i < obstaclesList.size(); i++) {
+			if (player.detect_collision_obstacles(obstaclesList[i])) {
+				player.react_collision(obstaclesList[i]);
+			}
+		}
+	}
 
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].update_obstacle();
 	}
-	for (int i = 0; i < obstaclesList.size(); i++) {
-		if (player.detect_collision_obstacles(obstaclesList[i])) {
-			player.react_collision(obstaclesList[i]);
-		}
-	}
+
 	for (int i = 0; i < missilesList.size(); i++) {
 		if (missilesList[i].missileTimeToLive > 0) {
 			missilesList[i].update_missile(myGraphics);
 		}
-		if (missilesList[i].missileLoadingTime <= 0 && missilesList[i].missileTimeToLive > 5) {
-			if (!player.detect_collision_missile(missilesList[i].pos_missile.x, missilesList[i].pos_missile.z)) {
-				missilesList[i].pathfinding(player);
-			}
-			else {
-				player.death();
-				missilesList[i].missileTimeToLive = 5;
+		if (player.alive) {
+			if (missilesList[i].missileLoadingTime <= 0 && missilesList[i].missileTimeToLive > 5) {
+				if (!player.detect_collision_missile(missilesList[i].pos_missile.x, missilesList[i].pos_missile.z)) {
+					missilesList[i].pathfinding(player);
+				}
+				else {
+					player.hurt();
+					missilesList[i].missileTimeToLive = 5;
+				}
 			}
 		}
 	}
 	player.detect_collision_walls();
 	player.update_player();
 	arena.flashing_cube();
-	//missile.update_missile(myGraphics);
-	/*if (missile.missileLoadingTime <= 0 && missile.missileTimeToLive > 5) {
-		missile.pathfinding(player);
-	}*/
 
 	int j = 0;//managing events
 	float this_minimum = 0.0f;
@@ -334,7 +334,6 @@ void renderScene() {
 	player.render_character(myGraphics);
 	arena.render_arena(myGraphics);
 	arena.update_arena(myGraphics);
-	//missile.render_missile(myGraphics);
 
 	/*if (missile.missileTimeToLive < 5) {
 		missile.explosion.update(myGraphics);

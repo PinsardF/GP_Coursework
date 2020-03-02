@@ -1,4 +1,5 @@
 #include "Event.h"
+#include <time.h>
 
 char type;
 int timetostart;
@@ -31,6 +32,7 @@ Event::Event(char input_type) {
 }
 
 Missile Event::launch_missile() {
+	srand(time(NULL));
 	int rand_x = rand() % 32;
 	int rand_z = rand() % 32;
 	float pos_x = 0.5f * (16 - rand_x);

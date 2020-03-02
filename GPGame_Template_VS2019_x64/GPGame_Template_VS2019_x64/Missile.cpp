@@ -18,8 +18,6 @@ Missile::Missile(glm::vec3 spawnPoint) {
 
 void Missile::init() {
 	missileBody.Load();
-	/*missileBody.fillColor = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);//YELLOW
-	missileBody.lineColor = glm::vec4(0.8f, 0.8f, 0.0f, 1.0f);//YELLOW*/
 	missileBody.fillColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
@@ -46,7 +44,6 @@ void Missile::update_missile(Graphics graphics) {
 	else {
 		if (missileTimeToLive > 5) {
 			pos_missile += vel_missile;
-			//pos_missile -= glm::vec3(0.5f,0.0f,0.5f);
 			vel_missile = glm::vec3(0.0f, 0.0f, 0.0f);
 			missileTimeToLive--;
 		}

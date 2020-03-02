@@ -5,10 +5,13 @@ PlayerBoundaryBox hitbox;
 glm::vec3	pos_player;
 glm::vec3	cel_player;
 std::vector<char> pushedList;
+int lives;
+bool alive;
 
 Player::Player() {
 	pos_player = glm::vec3(0.0f,0.5f,0.0f);
 	cel_player = glm::vec3(0.0f,0.0f,0.0f);
+	lives = 3;
 }
 
 /*Player::~Player()
@@ -20,50 +23,53 @@ void Player::init() {
 	character.Load();
 	character.fillColor = glm::vec4(0.0f, 0.0f, 255.0f, 1.0f); // Blue color
 	pushedList.clear();
+	alive = true;
 }
 
 void Player::update_player() {
-	int x_forces = 0;
-	int z_forces = 0;
-	bool x_pushed = false;
-	bool z_pushed = false;
+	if (alive) {
+		int x_forces = 0;
+		int z_forces = 0;
+		bool x_pushed = false;
+		bool z_pushed = false;
 
-	for (int i = 0; i < pushedList.size(); i++) {
-		switch (pushedList[i]) {
-		case 'U':
-			x_pushed = true;
-			x_forces -= 1;
-			break;
-		case 'D':
-			x_pushed = true;
-			x_forces += 1;
-			break;
-		case 'L':
-			z_pushed = true;
-			z_forces -= 1;
-			break;
-		case 'R':
-			z_pushed = true;
-			z_forces += 1;
-			break;
+		for (int i = 0; i < pushedList.size(); i++) {
+			switch (pushedList[i]) {
+			case 'U':
+				x_pushed = true;
+				x_forces -= 1;
+				break;
+			case 'D':
+				x_pushed = true;
+				x_forces += 1;
+				break;
+			case 'L':
+				z_pushed = true;
+				z_forces -= 1;
+				break;
+			case 'R':
+				z_pushed = true;
+				z_forces += 1;
+				break;
+			}
 		}
-	}
-	int dead = false;
-	if ((x_pushed && x_forces == 0) || (z_pushed && z_forces == 0)) {
-		dead = true;
-	}
+		int damage = false;
+		if ((x_pushed && x_forces == 0) || (z_pushed && z_forces == 0)) {
+			damage = true;
+		}
 
-	if (!dead) {
-		pos_player += cel_player;
-		hitbox.playerBoxCenter = pos_player;
-		hitbox.minPlayerBox += cel_player;
-		hitbox.maxPlayerBox += cel_player;
-		cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
+		if (!damage) {
+			pos_player += cel_player;
+			hitbox.playerBoxCenter = pos_player;
+			hitbox.minPlayerBox += cel_player;
+			hitbox.maxPlayerBox += cel_player;
+			cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+		else {
+			hurt();
+		}
+		pushedList.clear();
 	}
-	else {
-		death();
-	}
-	pushedList.clear();
 }
 
 void Player::render_character(Graphics graphics) {
@@ -174,10 +180,29 @@ void Player::react_collision(Obstacle obstacle) {
 	cel_player += obstacle.obstacleVelocity;
 }
 
+void Player::hurt() {
+	lives--;
+	if (lives == 0) {
+		death();
+	}
+	else {
+		pos_player = glm::vec3(-4.0f, 0.5f, -4.0f);
+		hitbox.playerBoxCenter = pos_player;
+		hitbox.minPlayerBox = pos_player - glm::vec3(0.5f, 0.5f, 0.5f);
+		hitbox.maxPlayerBox = pos_player + glm::vec3(0.5f, 0.5f, 0.5f);
+		cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
+		switch (lives) {
+		case 2:
+			character.fillColor = glm::vec4(0.0f, 255.0f, 255.0f, 1.0f);
+			break;
+		case 1:
+			character.fillColor = glm::vec4(0.0f, 255.0f, 0.0f, 1.0f);
+			break;
+		}
+	}
+}
+
 void Player::death() {
-	pos_player = glm::vec3(-4.0f, 0.5f, -4.0f);
-	hitbox.playerBoxCenter = pos_player;
-	hitbox.minPlayerBox = pos_player - glm::vec3(0.5f, 0.5f, 0.5f);
-	hitbox.maxPlayerBox = pos_player + glm::vec3(0.5f, 0.5f, 0.5f);
-	cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
+	alive = false;
+	pos_player = glm::vec3(0.0f, -2.0f, 0.0f);
 }

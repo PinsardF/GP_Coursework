@@ -1,51 +1,23 @@
-// Standard C++ libraries
-#include <iostream>
-#include <vector>
-using namespace std;
-#include <string>
-
-// Helper graphic libraries
-#include <GL/glew.h>
-
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/transform.hpp>
-#include "graphics.h"
-#include "shapes.h"
-#include <vector>
 #include "Arena.h"
-#include <time.h>
 
-Cube    myFloor;
-char walls[4] = { 'N','S','E','O' };
-Cube wall_N[17];
+Cube myFloor;//Object floor
+Cube wall_N[17];//Cubes composing the walls
 Cube wall_S[17];
 Cube wall_E[17];
 Cube wall_O[17];
-std::vector <char> flashingCubesChar;
-std::vector <int> flashingCubesInt;
-std::vector <int> flashingCubesTime;
-BoundaryBox northWallBox;
+std::vector <char> flashingCubesChar;//For each flashing cube, there is a char ('N','E','S','W') for the direction,
+std::vector <int> flashingCubesInt;//an int giving its coordinates,
+std::vector <int> flashingCubesTime;//and its flashing time
+Cube arena;//The arena itself
+BoundaryBox northWallBox;//The hitbox for each wall
 BoundaryBox southWallBox;
 BoundaryBox eastWallBox;
 BoundaryBox westWallBox;
-char shot_direction;
 
-Arena::Arena() {
-	shot_direction = 'v';
-}
-
-/*Player::~Player()
-{
-	delete this;
-}*/
+Arena::Arena() {}
 
 void Arena::init() {
 
-	frozen = 0;
-	flash = 0;
-	flashing_time = 0;
 	myFloor.Load();
 	myFloor.fillColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand Colour
 	myFloor.lineColor = glm::vec4(130.0f / 255.0f, 96.0f / 255.0f, 61.0f / 255.0f, 1.0f);    // Sand again
@@ -76,16 +48,17 @@ void Arena::init() {
 }
 
 void Arena::render_arena(Graphics graphics) {
-	myFloor.mv_matrix = graphics.viewMatrix *
+
+	myFloor.mv_matrix = graphics.viewMatrix *//Drawing the floor
 		glm::translate(glm::vec3(0.0f, 0.0f, 0.0f)) *
 		glm::scale(glm::vec3(1000.0f, 0.001f, 1000.0f)) *
 		glm::mat4(1.0f);
 	myFloor.proj_matrix = graphics.proj_matrix;
 	myFloor.Draw();
 
-	arena.Draw();
+	arena.Draw();//Draxing the arena
 
-	for (int i = 0; i < size(wall_N); i++) {
+	for (int i = 0; i < size(wall_N); i++) {//Drawing the walls
 		wall_N[i].Draw();
 		wall_S[i].Draw();
 	}
@@ -98,7 +71,7 @@ void Arena::render_arena(Graphics graphics) {
 
 void Arena::update_arena(Graphics graphics) {
 
-	glm::mat4 mv_matrix_arena =
+	glm::mat4 mv_matrix_arena =//Projection of the arena
 		glm::translate(glm::vec3(0.0f, 0.003f, 0.0f)) *
 		glm::scale(glm::vec3(17.0f, 0.001f, 17.0f)) *
 		glm::mat4(1.0f);
@@ -109,7 +82,7 @@ void Arena::update_arena(Graphics graphics) {
 	float original_x = 8.0f;
 	float original_z = 8.0f;
 
-	for (int i = 0; i < size(wall_N); i++) {
+	for (int i = 0; i < size(wall_N); i++) {//Projection of each block composing the arena
 		mv_matrix_wall_N =
 			glm::translate(glm::vec3(original_x, 0.5f, 9.0f)) *
 			glm::mat4(1.0f);
@@ -143,7 +116,7 @@ void Arena::update_arena(Graphics graphics) {
 }
 
 void Arena::color_a_cube(int index, glm::vec4 color) {
-	switch (flashingCubesChar[index]) {
+	switch (flashingCubesChar[index]) {//Depending on the wall (North, South, East, West)
 	case 'N':
 		wall_S[flashingCubesInt[index]].fillColor = color; // Dark red color;
 		break;
@@ -163,7 +136,7 @@ void Arena::color_a_cube(int index, glm::vec4 color) {
 
 void Arena::flashing_cube() {
 
-	for (int i = 0; i < flashingCubesInt.size(); i++) {
+	for (int i = 0; i < flashingCubesInt.size(); i++) {//Falshing each cube as required
 		if (flashingCubesTime[i] == 120 || flashingCubesTime[i] == 40) {
 			color_a_cube(i, glm::vec4(150.0f, 0.0f, 0.0f, 1.0f));
 		}
@@ -177,7 +150,7 @@ void Arena::flashing_cube() {
 		flashingCubesTime[i] --;
 	}
 
-	for (int i = 0; i < flashingCubesInt.size(); i++) {
+	for (int i = 0; i < flashingCubesInt.size(); i++) {//When a cube get an 'X' it must be cleared from the list (end of flashing)
 		if (flashingCubesChar[i] == 'X') {
 			flashingCubesChar.erase(flashingCubesChar.begin() + i);
 			flashingCubesInt.erase(flashingCubesInt.begin() + i);

@@ -24,6 +24,8 @@ public:
 	glm::vec3	pos_player;
 	glm::vec3	cel_player;
 	std::vector<char> pushedList;
+	int lives;
+	bool alive;
 
 	Player();
 	//~Player();
@@ -35,5 +37,6 @@ public:
 	bool detect_collision_missile(float input_x, float input_z);
 	glm::vec3 center_collision(Obstacle obstacle);
 	void react_collision(Obstacle obstacle);
+	void hurt();
 	void death();
 };
