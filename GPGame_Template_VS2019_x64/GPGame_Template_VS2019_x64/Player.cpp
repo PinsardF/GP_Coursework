@@ -77,7 +77,6 @@ void Player::render_character(Graphics graphics) {
 	character.mv_matrix = graphics.viewMatrix * mv_player;
 	character.proj_matrix = graphics.proj_matrix;
 	character.Draw();
-	character.fillColor = glm::vec4(0.0f, 0.0f, 255.0f, 1.0f);;
 }
 
 bool Player::detect_collision_obstacles(Obstacle obstacle) {

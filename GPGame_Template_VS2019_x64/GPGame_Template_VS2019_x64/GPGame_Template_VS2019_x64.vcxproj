@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="Arena.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="Missile.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="BoundaryBox.cpp" />
@@ -175,6 +176,7 @@
   <ItemGroup>
     <ClInclude Include="Arena.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="Missile.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="BoundaryBox.h" />

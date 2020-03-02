@@ -1,21 +1,21 @@
 #include "ExplosionEmitter.h"
 
 glm::vec3 explosionEmitterPosition;
-int explosionReloadtime;
 std::vector<ExplosionParticle> explosionParticlesList;
+int timetoexplode;//
 
-ExplosionEmitter::ExplosionEmitter(glm::vec3 input_vector, int input_reloadtime) {
+ExplosionEmitter::ExplosionEmitter(glm::vec3 input_vector) {
 	explosionEmitterPosition.x = input_vector.x;
 	explosionEmitterPosition.y = input_vector.y;
 	explosionEmitterPosition.z = input_vector.z;
-	explosionReloadtime = input_reloadtime;
+	timetoexplode = 30;//
 }
 
-ExplosionEmitter::ExplosionEmitter() : explosionEmitterPosition(glm::vec3(-1.0f, 0.0f, -1.0f)), explosionReloadtime(75) {};
+ExplosionEmitter::ExplosionEmitter(): explosionEmitterPosition(glm::vec3(0.0f,0.0f,0.0f)), timetoexplode(30){}
 
 void ExplosionEmitter::initExplosion() {
 	for (int i = 0; i < 80; i++) {
-		ExplosionParticle newParticle = ExplosionParticle(20 + rand() % 7,explosionEmitterPosition,glm::vec3(0.0f,0.0f,0.0f),true);
+		ExplosionParticle newParticle = ExplosionParticle(20 + rand() % 6,explosionEmitterPosition,glm::vec3(0.0f,0.0f,0.0f),true);
 		newParticle.init();
 		explosionParticlesList.push_back(newParticle);
 	}
@@ -34,15 +34,15 @@ void ExplosionEmitter::update(Graphics graphics) {
 		}
 	}
 
-	if (explosionParticlesList.size() == 0) {
-		if (explosionReloadtime <= 0) {
+	/*if (explosionParticlesList.size() == 0) {
+		if (timetoexplode <= 0) {
 			initExplosion();
-			explosionReloadtime = 30;
+			timetoexplode = 30;
 		}
 		else {
-			explosionReloadtime--;
+			timetoexplode--;
 		}
-	}
+	}*/
 }
 
 

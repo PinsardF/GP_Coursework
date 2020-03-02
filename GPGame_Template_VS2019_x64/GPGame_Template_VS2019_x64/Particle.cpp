@@ -36,46 +36,6 @@ void Particle::init() {
 	visualParticle.lineWidth = 5.0f;
 }
 
-/*void Particle::update(Graphics graphics) {
-	if (timetolive > 0.0f) {//if the particle's lifetime isn't over...
-		int x_rand = rand() % 10;//it randomly deviates on the x and z axis
-		float x_deviation = 0.0f;
-		switch (x_rand) {
-		case 0:
-			x_deviation = 0.03f;
-			break;
-		case 1:
-			x_deviation = -0.03f;
-			break;
-		default:
-			break;
-		}
-		int z_rand = rand() % 10;
-		float z_deviation = 0.0f;
-		switch (z_rand) {
-		case 0:
-			z_deviation = 0.03f;
-			break;
-		case 1:
-			z_deviation = -0.03f;
-			break;
-		default:
-			break;
-		}
-
-		position.x += x_deviation;
-		position.y += 0.01f;
-		position.z += z_deviation;
-		timetolive--;//lifetime decreases
-		glm::mat4 mv_particle =//we calculate the new projection of the particle
-			glm::translate(position) *
-			glm::scale(glm::vec3(200.0f, 200.0f, 0.03f)) *
-			glm::mat4(1.0f);
-		visualParticle.mv_matrix = graphics.viewMatrix * mv_particle;
-		visualParticle.proj_matrix = graphics.proj_matrix;
-	}
-}*/
-
 void Particle::update(Graphics graphics) {
 	if (timetolive > 0.0f) {//if the particle's lifetime isn't over...
 		float x_deviation = rand() % 10;//it randomly deviates on the x and z axis
@@ -97,5 +57,6 @@ void Particle::update(Graphics graphics) {
 			glm::mat4(1.0f);
 		visualParticle.mv_matrix = graphics.viewMatrix * mv_particle;
 		visualParticle.proj_matrix = graphics.proj_matrix;
+		//visualParticle.Draw();
 	}
 }

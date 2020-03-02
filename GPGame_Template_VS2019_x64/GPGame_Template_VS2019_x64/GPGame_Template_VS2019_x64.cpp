@@ -19,6 +19,9 @@ using namespace std;
 #include "Arena.h"
 #include "Obstacle.h"
 #include "Event.h"
+#include "Missile.h"
+#include "ExplosionEmitter.h"
+#include "Particle.h"
 
 // MAIN FUNCTIONS
 void startup();
@@ -48,7 +51,9 @@ Player	player;
 Arena	arena;
 std::vector<Obstacle> obstaclesList;
 std::vector<Event> eventsList;
-//int		flashing_time = 0, shot_direction_picker = 0;
+Missile missile = Missile(glm::vec3(8.0f, 0.5f, 8.0f));
+//ExplosionEmitter boom = ExplosionEmitter(glm::vec3(3.0f, 0.5f, 3.0f));
+//Cube testcube;
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -107,8 +112,12 @@ void startup() {
 
 	player.init();
 	arena.init();
+	missile.init();
+	//missile.pathfinding(player);
+	//boom.initExplosion();
+	//testcube.Load();
 
-	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 0.5f), glm::vec3(0.9f, 0.9f, 2.0f),120));
+	/*eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 0.5f), glm::vec3(0.9f, 0.9f, 2.0f),120));
 	eventsList.push_back(Event('O', glm::vec3(5.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f),150));
 	eventsList.push_back(Event('O', glm::vec3(-9.0f, 0.5f, 1.0f), glm::vec3(0.9f, 0.9f, 10.0f), 200));
 	eventsList.push_back(Event('O', glm::vec3(4.5f, 0.5f, -9.0f), glm::vec3(8.0f, 0.9f, 0.9f), 200));
@@ -130,7 +139,7 @@ void startup() {
 	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -1.5f), glm::vec3(0.9f, 0.9f, 14.0f), 1400));
 	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 7.5f), glm::vec3(0.9f, 0.9f, 1.0f), 1400));
 	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -8.0f), glm::vec3(0.9f, 0.9f, 1.0f), 1500));
-	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 1.5f), glm::vec3(0.9f, 0.9f, 15.0f), 1500));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 1.5f), glm::vec3(0.9f, 0.9f, 15.0f), 1500));*/
 	
 
 	for (int i = 0; i < obstaclesList.size(); i++) {
@@ -212,6 +221,10 @@ void updateSceneElements() {
 	player.detect_collision_walls();
 	player.update_player();
 	arena.flashing_cube();
+	missile.update_missile(myGraphics);
+	if (missile.missileLoadingTime <= 0 && missile.missileTimeToLive > 5) {
+		missile.pathfinding(player);
+	}
 
 	int j = 0;
 	float this_minimum = 0.0f;
@@ -295,6 +308,11 @@ void renderScene() {
 	player.render_character(myGraphics);
 	arena.render_arena(myGraphics);
 	arena.update_arena(myGraphics);
+	missile.render_missile(myGraphics);
+	if (missile.missileTimeToLive < 5) {
+		missile.explosion.update(myGraphics);
+	}
+	//boom.update(myGraphics);
 
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].render_obstacle(myGraphics);
@@ -306,6 +324,13 @@ void renderScene() {
 			i--;
 		}
 	}
+
+	/*glm::mat4 mv_cube =
+		glm::translate(glm::vec3(0.0f,5.0f,0.0f)) *
+		glm::mat4(1.0f);
+	testcube.mv_matrix = myGraphics.viewMatrix * mv_cube;
+	testcube.proj_matrix = myGraphics.proj_matrix;
+	testcube.Draw();*/
 
 	// FLASHING A CUBE
 	arena.flashing_cube();

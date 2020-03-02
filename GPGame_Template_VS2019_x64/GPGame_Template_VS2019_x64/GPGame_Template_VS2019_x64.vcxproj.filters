@@ -14,6 +14,7 @@
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="PlayerBoundaryBox.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="Missile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arena.h" />
@@ -28,5 +29,6 @@
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="PlayerBoundaryBox.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="Missile.h" />
   </ItemGroup>
 </Project>
