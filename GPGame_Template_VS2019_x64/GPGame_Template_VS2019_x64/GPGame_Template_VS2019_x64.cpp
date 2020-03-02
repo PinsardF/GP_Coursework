@@ -138,6 +138,42 @@ void startup() {
 	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1900));
 	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2000));
 	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2000));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2100));
+	eventsList.push_back(Event('O', glm::vec3(6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 2200));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 2200));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2300));
+	eventsList.push_back(Event('O', glm::vec3(6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 2400));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 2400));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2500));
+	eventsList.push_back(Event('O', glm::vec3(6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 2600));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 2600));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2700));
+	eventsList.push_back(Event('O', glm::vec3(6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 2800));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 2800));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2900));
+	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2900));
+	eventsList.push_back(Event('O', glm::vec3(6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 3000));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 3000));
+	eventsList.push_back(Event('O', glm::vec3(6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 3100));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 3100));
+	eventsList.push_back(Event('O', glm::vec3(6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 3200));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 3200));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -8.0f), glm::vec3(0.9f, 0.9f, 1.0f), 3500));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 1.5f), glm::vec3(0.9f, 0.9f, 15.0f), 3500));
+	eventsList.push_back(Event('O', glm::vec3(-9.0f, 0.5f, -8.0f), glm::vec3(0.9f, 0.9f, 1.0f), 3500));
+	eventsList.push_back(Event('O', glm::vec3(-9.0f, 0.5f, 1.5f), glm::vec3(0.9f, 0.9f, 15.0f), 3500));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 3800));
+	eventsList.push_back(Event('O', glm::vec3(3.0f, 0.5f, 9.0f), glm::vec3(12.0f, 0.9f, 0.9f), 3800));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, -9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 3800));
+	eventsList.push_back(Event('O', glm::vec3(3.0f, 0.5f, -9.0f), glm::vec3(12.0f, 0.9f, 0.9f), 3800));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, -7.0f), glm::vec3(0.9f, 0.9f, 3.0f), 4100));
+	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 2.5f), glm::vec3(0.9f, 0.9f, 13.0f), 4100));
+	eventsList.push_back(Event('O', glm::vec3(-9.0f, 0.5f, -7.0f), glm::vec3(0.9f, 0.9f, 3.0f), 4100));
+	eventsList.push_back(Event('O', glm::vec3(-9.0f, 0.5f, 2.5f), glm::vec3(0.9f, 0.9f, 13.0f), 4100));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 4100));
+	eventsList.push_back(Event('O', glm::vec3(3.0f, 0.5f, 9.0f), glm::vec3(12.0f, 0.9f, 0.9f), 4100));
+	eventsList.push_back(Event('O', glm::vec3(-6.5f, 0.5f, -9.0f), glm::vec3(4.0f, 0.9f, 0.9f), 4100));
+	eventsList.push_back(Event('O', glm::vec3(3.0f, 0.5f, -9.0f), glm::vec3(12.0f, 0.9f, 0.9f), 4100));
 
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
@@ -203,6 +239,7 @@ void updateSceneElements() {
 		if (keyStatus[GLFW_KEY_LEFT]) player.cel_player.x += 0.1f;
 		if (keyStatus[GLFW_KEY_DOWN]) player.cel_player.z -= 0.1f;
 		if (keyStatus[GLFW_KEY_RIGHT]) player.cel_player.x -= 0.1f;
+		if (keyStatus[GLFW_KEY_F]) player.lives = 3;
 
 		for (int i = 0; i < obstaclesList.size(); i++) {
 			if (player.detect_collision_obstacles(obstaclesList[i])) {
