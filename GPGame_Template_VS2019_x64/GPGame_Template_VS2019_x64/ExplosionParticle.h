@@ -1,34 +1,18 @@
-// Standard C++ libraries
-//#include <iostream>
-//#include <vector>
-//using namespace std;
-//#include <string>
-
-// Helper graphic libraries
-//#include <GL/glew.h>
-
-//#include <GLFW/glfw3.h>
-//#include <glm/glm.hpp>
-//#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>
 #include "graphics.h"
-//#include <vector>
 #include "shapes.h"
 #pragma once
 class ExplosionParticle{
 public:
-	int explosionTimetolive;
-	glm::vec3 explosionPosition;
-	glm::vec3 explosionVelocity;
-	//glm::vec3 acceleration;
-	bool explosionIsalive;
-	Line explosionVisualParticle;
+	int explosionTimetolive;//Time to live of the particle
+	glm::vec3 explosionPosition;//Position of the particle
+	glm::vec3 explosionVelocity;//Velocity of the particle
+	bool explosionIsalive;//Is the particle still on screen ?
+	Line explosionVisualParticle;//Visual body of the particle
 
-	ExplosionParticle();
-
-	ExplosionParticle(int input_timetolive, glm::vec3 input_position, glm::vec3 input_velocity, bool input_isalive);//
-	void init();
-
-	void update(Graphics graphics);
+	ExplosionParticle();//Constructor
+	ExplosionParticle(int input_timetolive, glm::vec3 input_position, glm::vec3 input_velocity, bool input_isalive);//Constructor
+	void init();//Initialisation of the particle
+	void update(Graphics graphics);//Updating the particle at each frame
 };
 

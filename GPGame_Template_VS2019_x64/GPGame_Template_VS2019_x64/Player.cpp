@@ -1,23 +1,18 @@
 #include "Player.h"
 
-Cube		character;
-PlayerBoundaryBox hitbox;
-glm::vec3	pos_player;
-glm::vec3	cel_player;
-std::vector<char> pushedList;
-int lives;
-bool alive;
+Cube character;//Visual body of the player
+PlayerBoundaryBox hitbox;//Hitbox of the player
+glm::vec3 pos_player;//Position of the player
+glm::vec3 cel_player;//Velocity of the player
+std::vector<char> pushedList;//List of directions where the player is pushed (to know when he gets crushed)
+int lives;//Number of lives
+bool alive;//Is the player still alive ?
 
 Player::Player() {
 	pos_player = glm::vec3(0.0f,0.5f,0.0f);
 	cel_player = glm::vec3(0.0f,0.0f,0.0f);
 	lives = 3;
 }
-
-/*Player::~Player()
-{
-	delete this;
-}*/
 
 void Player::init() {
 	character.Load();
@@ -27,13 +22,13 @@ void Player::init() {
 }
 
 void Player::update_player() {
-	if (alive) {
+	if (alive) {//If the player is still alive...
 		int x_forces = 0;
 		int z_forces = 0;
 		bool x_pushed = false;
 		bool z_pushed = false;
 
-		for (int i = 0; i < pushedList.size(); i++) {
+		for (int i = 0; i < pushedList.size(); i++) {//We check every direction in which the player is pushed
 			switch (pushedList[i]) {
 			case 'U':
 				x_pushed = true;
@@ -68,7 +63,7 @@ void Player::update_player() {
 		else {
 			hurt();
 		}
-		pushedList.clear();
+		pushedList.clear();//We clear the list of directions pushing the player
 	}
 }
 
@@ -78,7 +73,7 @@ void Player::render_character(Graphics graphics) {
 		glm::mat4(1.0f);
 	character.mv_matrix = graphics.viewMatrix * mv_player;
 	character.proj_matrix = graphics.proj_matrix;
-	character.Draw();
+	character.Draw();//Drawing the character
 }
 
 bool Player::detect_collision_obstacles(Obstacle obstacle) {
@@ -110,6 +105,7 @@ void Player::detect_collision_walls() {
 }
 
 bool Player::detect_collision_missile(float input_x, float input_z) {
+	//If the distance between the player and the missile is too short, it means the missile hurts him
 	if (abs(input_x - pos_player.x) < 0.95f && abs(input_z - pos_player.z) < 0.95f) {
 		return true;
 	}
@@ -157,12 +153,12 @@ void Player::react_collision(Obstacle obstacle) {
 	glm::vec3 centerCollision = center_collision(obstacle);
 	float x_distance = abs(pos_player.x - centerCollision.x);
 	float z_distance = abs(pos_player.z - centerCollision.z);
-	if (x_distance < z_distance) {//calculates if the collision is on the x or the z axis of the player
-		if(centerCollision.z - pos_player.z < 0.0f){//if the player is moving towards the negative z...
-			cel_player.z = 0.002f;//we push him back to the positive z
+	if (x_distance < z_distance) {//Calculates if the collision is on the x or the z axis of the player
+		if(centerCollision.z - pos_player.z < 0.0f){//If the player is moving towards the negative z...
+			cel_player.z = 0.002f;//We push him back to the positive z
 			pushedList.push_back('D');
 		}
-		else {//else we push him to the negative z
+		else {//Else we push him to the negative z
 			cel_player.z = -0.002f;
 			pushedList.push_back('U');
 		}
@@ -186,12 +182,12 @@ void Player::hurt() {
 		death();
 	}
 	else {
-		pos_player = glm::vec3(-4.0f, 0.5f, -4.0f);
+		pos_player = glm::vec3(-4.0f, 0.5f, -4.0f);//The player respawns
 		hitbox.playerBoxCenter = pos_player;
 		hitbox.minPlayerBox = pos_player - glm::vec3(0.5f, 0.5f, 0.5f);
 		hitbox.maxPlayerBox = pos_player + glm::vec3(0.5f, 0.5f, 0.5f);
 		cel_player = glm::vec3(0.0f, 0.0f, 0.0f);
-		switch (lives) {
+		switch (lives) {//The player changes color depending on how many lives he still has
 		case 2:
 			character.fillColor = glm::vec4(0.0f, 255.0f, 255.0f, 1.0f);
 			break;

@@ -8,8 +8,6 @@
     <ClCompile Include="ExplosionParticle.cpp" />
     <ClCompile Include="GPGame_Template_VS2019_x64.cpp" />
     <ClCompile Include="graphics.cpp" />
-    <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="shapes.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="PlayerBoundaryBox.cpp" />
@@ -24,8 +22,6 @@
     <ClInclude Include="ExplosionEmitter.h" />
     <ClInclude Include="ExplosionParticle.h" />
     <ClInclude Include="graphics.h" />
-    <ClInclude Include="Particle.h" />
-    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="shapes.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="PlayerBoundaryBox.h" />

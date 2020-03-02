@@ -1,11 +1,11 @@
 #include "Obstacle.h"
 
-char obstacleDirection;
-glm::vec3 obstaclePosition;
-glm::vec3 obstacleVelocity;
-glm::vec3 obstacleDimension;
-Cube obstacleBody;
-BoundaryBox obstacleBox;
+char obstacleDirection;//Direction of the obstacle (North, South, East, West)
+glm::vec3 obstaclePosition;//Position of the obstacle
+glm::vec3 obstacleVelocity;//Velocity of the obstacle
+glm::vec3 obstacleDimension;//Dimensions of the obstacle
+Cube obstacleBody;//Visual body of the obstacle
+BoundaryBox obstacleBox;//Hitbox of the obstacle
 
 Obstacle::Obstacle(glm::vec3 begin, char direction, glm::vec3 dim) {
 	obstaclePosition = begin;
@@ -14,7 +14,7 @@ Obstacle::Obstacle(glm::vec3 begin, char direction, glm::vec3 dim) {
 }
 
 void Obstacle::init() {
-	switch (obstacleDirection) {
+	switch (obstacleDirection) {//Depending on the direction of the obstacle we chose the right velocity
 	case 'E':
 		obstacleVelocity = glm::vec3(-0.05f,0.0f,0.0f);
 		break;
@@ -30,7 +30,7 @@ void Obstacle::init() {
 	}
 	obstacleBody.Load();
 	glm::vec3 dim = obstacleDimension / glm::vec3(2.0f, 2.0f, 2.0f);
-	obstacleBox = BoundaryBox(obstaclePosition, obstaclePosition + dim, obstaclePosition - dim);
+	obstacleBox = BoundaryBox(obstaclePosition, obstaclePosition + dim, obstaclePosition - dim);//Initialisation of the hitbox
 }
 
 void Obstacle::render_obstacle(Graphics graphics) {
@@ -39,17 +39,16 @@ void Obstacle::render_obstacle(Graphics graphics) {
 		glm::mat4(1.0f);
 	obstacleBody.mv_matrix = graphics.viewMatrix * mv_obstacle;
 	obstacleBody.proj_matrix = graphics.proj_matrix;
-	obstacleBody.Draw();
+	obstacleBody.Draw();//We draw the obstacle
 }
 
 void Obstacle::update_obstacle() {
-	obstaclePosition += obstacleVelocity;
+	obstaclePosition += obstacleVelocity;//We move the obstacle and its hitbox
 	obstacleBox.center = obstaclePosition;
 	obstacleBox.min_position += obstacleVelocity;
 	obstacleBox.max_position += obstacleVelocity;
 
-	//CHANGE THIS WHEN WE HAVE A LIST OF OBSTACLES
-	switch (obstacleDirection) {
+	switch (obstacleDirection) {//When the obstacle gets out of the arena, its direction changes to 'X' and it's not considered anymore
 	case 'E':
 		if (obstaclePosition.x < -9.0f) {
 			obstacleDirection = 'X';

@@ -1,9 +1,6 @@
-
 #include <iostream>
 #include <vector>
-
 using namespace std;
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -21,7 +18,6 @@ using namespace std;
 #include "Event.h"
 #include "Missile.h"
 #include "ExplosionEmitter.h"
-#include "Particle.h"
 
 // MAIN FUNCTIONS
 void startup();
@@ -52,7 +48,6 @@ Arena	arena;
 std::vector<Obstacle> obstaclesList;
 std::vector<Event> eventsList;
 std::vector<Missile> missilesList;
-//Missile missile = Missile(glm::vec3(7.5f, 0.5f, 7.5f));
 
 // Some global variable to do the animation.
 float t = 0.001f;            // Global variable for animation
@@ -109,9 +104,11 @@ void startup() {
 	myGraphics.aspect = (float)myGraphics.windowWidth / (float)myGraphics.windowHeight;
 	myGraphics.proj_matrix = glm::perspective(glm::radians(50.0f), myGraphics.aspect, 0.1f, 1000.0f);
 
+	//Init the Objects
 	player.init();
 	arena.init();
 
+	//Init all the events
 	eventsList.push_back(Event('O', glm::vec3(9.0f, 0.5f, 0.5f), glm::vec3(0.9f, 0.9f, 2.0f),120));
 	eventsList.push_back(Event('O', glm::vec3(5.5f, 0.5f, 9.0f), glm::vec3(4.0f, 0.9f, 0.9f),150));
 	eventsList.push_back(Event('O', glm::vec3(-9.0f, 0.5f, 1.0f), glm::vec3(0.9f, 0.9f, 10.0f), 200));
@@ -141,10 +138,6 @@ void startup() {
 	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1900));
 	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2000));
 	eventsList.push_back(Event('M', glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2000));
-
-	for (int i = 0; i < obstaclesList.size(); i++) {
-		obstaclesList[i].init();
-	}
 
 	// Optimised Graphics
 	myGraphics.SetOptimisations();        // Cull and depth testing
@@ -218,6 +211,7 @@ void updateSceneElements() {
 		}
 	}
 
+	//Update the objects
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].update_obstacle();
 	}
@@ -242,19 +236,19 @@ void updateSceneElements() {
 	player.update_player();
 	arena.flashing_cube();
 
-	int j = 0;//managing events
+	int j = 0;//Managing events
 	float this_minimum = 0.0f;
 	float this_maximum = 0.0f;
 	for (int i = 0; i < eventsList.size(); i++) {
 		switch (eventsList[i].type) {
-		case 'O':
-			if (eventsList[i].timetostart == 120) {
-				switch (eventsList[i].eventDirection) {
+		case 'O'://If the event is an Obstacle
+			if (eventsList[i].timetostart == 120) {//If the event just starts...
+				switch (eventsList[i].eventDirection) {//Depending on the direction (North South East West) the Obstacle is heading towards
 				case 'E':
 					this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
 					this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
 					j = (int)(this_minimum + 0.5f);
-					while (j < this_maximum) {
+					while (j < this_maximum) {//We choose all the cubes that have to flash on the wall
 						arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
 						arena.flashingCubesTime.push_back(120);
 						arena.flashingCubesInt.push_back(8 + j);
@@ -265,7 +259,7 @@ void updateSceneElements() {
 					this_minimum = eventsList[i].pos_event.z - (eventsList[i].dim_event.z / 2);
 					this_maximum = eventsList[i].pos_event.z + (eventsList[i].dim_event.z / 2);
 					j = (int)(this_minimum + 0.5f);
-					while (j < this_maximum) {
+					while (j < this_maximum) {//We choose all the cubes that have to flash on the wall
 						arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
 						arena.flashingCubesTime.push_back(120);
 						arena.flashingCubesInt.push_back(8 + j);
@@ -276,7 +270,7 @@ void updateSceneElements() {
 					this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
 					this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
 					j = (int)(this_minimum + 0.5f);
-					while (j < this_maximum) {
+					while (j < this_maximum) {//We choose all the cubes that have to flash on the wall
 						arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
 						arena.flashingCubesTime.push_back(120);
 						arena.flashingCubesInt.push_back(8 - j);
@@ -287,7 +281,7 @@ void updateSceneElements() {
 					this_minimum = eventsList[i].pos_event.x - (eventsList[i].dim_event.x / 2);
 					this_maximum = eventsList[i].pos_event.x + (eventsList[i].dim_event.x / 2);
 					j = (int)(this_minimum + 0.5f);
-					while (j < this_maximum) {
+					while (j < this_maximum) {//We choose all the cubes that have to flash on the wall
 						arena.flashingCubesChar.push_back(eventsList[i].eventDirection);
 						arena.flashingCubesTime.push_back(120);
 						arena.flashingCubesInt.push_back(8 - j);
@@ -295,26 +289,26 @@ void updateSceneElements() {
 					}
 					break;
 				}
-				eventsList[i].timetostart--;
+				eventsList[i].timetostart--;//We decrease the timetostart of the event
 
 			}
 			else if (eventsList[i].timetostart > 0) {
 				eventsList[i].timetostart--;
 			}
-			else {
-				obstaclesList.insert(obstaclesList.begin(), eventsList[i].launch_obstacle());
-				obstaclesList[0].init();
-				eventsList.erase(eventsList.begin() + i);
+			else {//If timetostart is negative...
+				obstaclesList.insert(obstaclesList.begin(), eventsList[i].launch_obstacle());//We insert the new Obstacle in the list
+				obstaclesList[0].init();//We init it (we put it at the front for this)
+				eventsList.erase(eventsList.begin() + i);//And we erase the event from the eventsList
 			}
 			break;
-		case 'M':
-			if (eventsList[i].timetostart > 0) {
-				eventsList[i].timetostart--;
+		case 'M'://If it is a Missile
+			if (eventsList[i].timetostart > 0) {//If timetostart is positive
+				eventsList[i].timetostart--;//We do nothing but decrementing timetostart
 			}
-			else if (eventsList[i].timetostart == 0) {
-				missilesList.insert(missilesList.begin(), eventsList[i].launch_missile());
-				missilesList[0].init();
-				eventsList.erase(eventsList.begin() + i);
+			else if (eventsList[i].timetostart == 0) {//If timetostart is null...
+				missilesList.insert(missilesList.begin(), eventsList[i].launch_missile());//We insert the missile in the missilesList
+				missilesList[0].init();//We init it
+				eventsList.erase(eventsList.begin() + i);//And we erase the event from the eventsList
 			}
 		}
 	}
@@ -334,10 +328,6 @@ void renderScene() {
 	player.render_character(myGraphics);
 	arena.render_arena(myGraphics);
 	arena.update_arena(myGraphics);
-
-	/*if (missile.missileTimeToLive < 5) {
-		missile.explosion.update(myGraphics);
-	}*/
 
 	for (int i = 0; i < obstaclesList.size(); i++) {
 		obstaclesList[i].render_obstacle(myGraphics);

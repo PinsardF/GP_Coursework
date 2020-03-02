@@ -5,11 +5,10 @@ class ExplosionEmitter{
 public:
 	glm::vec3 explosionEmitterPosition;
 	std::vector<ExplosionParticle> explosionParticlesList;
-	int timetoexplode;//
 
-	ExplosionEmitter(glm::vec3 input_vector);
-	ExplosionEmitter();
-	void initExplosion();
-	void update(Graphics graphics);
+	ExplosionEmitter(glm::vec3 input_vector);//Constructor
+	ExplosionEmitter();//Constructor
+	void initExplosion();//Initialisation of the particles
+	void update(Graphics graphics);//Updating the emitter at each frame
 };
 

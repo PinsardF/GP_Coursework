@@ -1,13 +1,12 @@
 #include "Missile.h"
-#include <glm\gtx\transform.hpp>
 #include "ExplosionEmitter.h"
 
-Sphere missileBody;
-glm::vec3 pos_missile;
-glm::vec3 vel_missile;
-int missileTimeToLive;
-int missileLoadingTime;
-ExplosionEmitter explosion;
+Sphere missileBody;//Visual body of the missile
+glm::vec3 pos_missile;//Position of the missile
+glm::vec3 vel_missile;//Velocity of the missile
+int missileTimeToLive;//Time to live of the missile
+int missileLoadingTime;//Loading time (time to start moving)
+ExplosionEmitter explosion;//Explosion when the missile dies
 
 Missile::Missile(glm::vec3 spawnPoint) {
 	pos_missile = spawnPoint;
@@ -18,53 +17,54 @@ Missile::Missile(glm::vec3 spawnPoint) {
 
 void Missile::init() {
 	missileBody.Load();
-	missileBody.fillColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	missileBody.fillColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);//WHITE
 }
 
 void Missile::render_missile(Graphics graphics) {
-	if (missileTimeToLive > 0) {
+	if (missileTimeToLive > 0) {//If the missile is still alive...
 		glm::mat4 mv_missile =
 			glm::translate(pos_missile) *
 			glm::scale(glm::vec3(0.9f, 0.9f, 0.9f)) *
 			glm::mat4(1.0f);
 		missileBody.mv_matrix = graphics.viewMatrix * mv_missile;
 		missileBody.proj_matrix = graphics.proj_matrix;
-		missileBody.Draw();
+		missileBody.Draw();//We draw it
 	}
 }
 
 void Missile::update_missile(Graphics graphics) {
-	if (missileLoadingTime > 0) {
+	if (missileLoadingTime > 0) {//If the loading time is not over we do nothing but decrementing it
 		missileLoadingTime--;
 	}
-	else if (missileLoadingTime == 0){
+	else if (missileLoadingTime == 0){//When the loading time reaches zero
 		missileBody.fillColor = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);//YELLOW
 		missileLoadingTime--;
 	}
-	else {
-		if (missileTimeToLive > 5) {
+	else {//Once the missile has started moving
+		if (missileTimeToLive > 5) {//If it's not about to explode the missile just moves
 			pos_missile += vel_missile;
 			vel_missile = glm::vec3(0.0f, 0.0f, 0.0f);
 			missileTimeToLive--;
 		}
-		else if (missileTimeToLive == 5) {
+		else if (missileTimeToLive == 5) {//When it reaches 5 we begin the explosion
 			explosion = ExplosionEmitter(pos_missile);
 			explosion.initExplosion();
 			missileTimeToLive--;
 		}
-		else if (missileTimeToLive >= 0) {
+		else if (missileTimeToLive >= 0) {//Else we just decrease the time to live
 			missileTimeToLive--;
 		}
 	}
 }
 
 void Missile::pathfinding(Player player) {
-	glm::vec3 targetPath = player.pos_player - pos_missile;
+	glm::vec3 targetPath = player.pos_player - pos_missile;//We just follow the player
 	float xPath = targetPath.x / sqrt((targetPath.x * targetPath.x) + (targetPath.z * targetPath.z));
 	float zPath = targetPath.z / sqrt((targetPath.x * targetPath.x) + (targetPath.z * targetPath.z));
 	vel_missile.x = xPath / 11.0f;
 	vel_missile.z = zPath / 11.0f;
 	
+	//A* Pathfinding		DID NOT WORK
 	/*
 	Node map[33][33];
 	for(int i=0;i<33;i++){
